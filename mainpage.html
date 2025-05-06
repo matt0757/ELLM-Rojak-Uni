@@ -254,11 +254,13 @@
                 </div>
 
                 <!-- Card 3 -->
-                <div class="card">
-                    <h3>Mr. Vault</h3>
-                    <img src="mainpage img/Mr Vault.png" alt="Mr. Vault character" class="character-img" >
-                    <p>Your Medical Documentator</p>
-                </div>
+                <a href="vault.html" class="card-link">
+                    <div class="card">
+                        <h3>Mr. Vault</h3>
+                        <img src="mainpage img/Mr Vault.png" alt="Mr. Vault character" class="character-img">
+                        <p>Your Medical Documentator</p>
+                    </div>
+                  </a>                  
             </div>
         </div>
     </section>
@@ -270,5 +272,26 @@
             <p>&copy; 2025 CareMore. All rights reserved.</p>
         </div>
     </footer>
+
+    <!-- 🔽 Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBPeaDGjtbvmrhCY_7YEaTxDN3NBHgRS14",
+            authDomain: "medical-records-5026f.firebaseapp.com",
+            projectId: "medical-records-5026f",
+            storageBucket: "medical-records-5026f.firebasestorage.app",
+            messagingSenderId: "1084582559517",
+            appId: "1:1084582559517:web:c40d74ba2149e52b40abf4",
+            measurementId: "G-ZC2K1ZW7SF"
+    };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
+
 </body>
 </html>

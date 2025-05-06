@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mr. Vault - Medical Document Submission</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 40px;
+    }
+
+    .container {
+      background-color: white;
+      max-width: 500px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 20px;
+      background-color: #8ee0a1;
+      color: white;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #7bd391;
+    }
+
+    .success {
+      margin-top: 15px;
+      color: green;
+      text-align: center;
+    }
+
+    .error {
+      margin-top: 15px;
+      color: red;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Submit Medical Note</h1>
+    <form id="vaultForm">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" required>
+
+      <label for="medicalNote">Medical Note</label>
+      <textarea id="medicalNote" rows="5" required></textarea>
+
+      <button type="submit">Submit</button>
+
+      <div class="success" id="successMsg" style="display:none;">Data saved successfully!</div>
+      <div class="error" id="errorMsg" style="display:none;">Error saving data. Try again.</div>
+    </form>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import Firebase functions
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+  
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBPeaDGjtbvmrhCY_7YEaTxDN3NBHgRS14",
+      authDomain: "medical-records-5026f.firebaseapp.com",
+      projectId: "medical-records-5026f",
+      storageBucket: "medical-records-5026f.firebasestorage.app",
+      messagingSenderId: "1084582559517",
+      appId: "1:1084582559517:web:c40d74ba2149e52b40abf4",
+      measurementId: "G-ZC2K1ZW7SF"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+  
+    // Form submission
+    const form = document.getElementById('vaultForm');
+    const successMsg = document.getElementById('successMsg');
+    const errorMsg = document.getElementById('errorMsg');
+  
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      successMsg.style.display = "none";
+      errorMsg.style.display = "none";
+  
+      const fullName = document.getElementById('fullName').value;
+      const medicalNote = document.getElementById('medicalNote').value;
+  
+      try {
+        await addDoc(collection(db, "medicalNotes"), {
+          fullName,
+          medicalNote,
+          timestamp: serverTimestamp()
+        });
+        successMsg.style.display = "block";
+        form.reset();
+      } catch (err) {
+        console.error("Error adding document:", err);
+        errorMsg.style.display = "block";
+      }
+    });
+  </script>
+  
+</body>
+</html>
