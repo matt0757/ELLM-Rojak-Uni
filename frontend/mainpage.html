@@ -12,8 +12,22 @@
             font-family: 'Arial', sans-serif;
         }
 
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
         body {
             background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .page-wrapper {
+            flex: 1 0 auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .container {
@@ -33,9 +47,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px; /* Add gap between elements */
         }
 
         .logo {
+            flex: 1; /* Logo takes available space */
             font-size: 28px;
             font-weight: bold;
             color: #2d3721;
@@ -47,7 +63,9 @@
 
         .nav-links {
             display: flex;
+            align-items: center; /* Add this to align items vertically */
             gap: 30px;
+            margin-right: 20px; /* Add space between nav links and icon button */
         }
 
         .nav-links a {
@@ -55,6 +73,9 @@
             color: #8abb8f;
             font-weight: 500;
             transition: color 0.3s;
+            display: flex; /* Add this for consistent alignment */
+            align-items: center; /* Add this for vertical alignment */
+            height: 34px; /* Add fixed height to match sign-out button */
         }
 
         .nav-links a:hover {
@@ -71,6 +92,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-left: auto; /* Pushes the icon button to the right */
         }
 
         /* Hero Section Styles */
@@ -91,20 +113,23 @@
         .hero h1 {
             font-size: 28px; /* Adjusted font size */
             margin-bottom: 8px;
-            color: #1a237e;
+            color: #00E676; /* Bright mint green */
             font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* Added shadow for better readability */
         }
         
         .hero h2 {
             font-size: 30px; /* Adjusted font size */
             margin-bottom: 15px;
-            color: #1a237e;
+            color: #00E676; /* Matching bright mint green */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
         }
         
         .hero p {
             font-size: 18px; /* Adjusted font size */
             margin-bottom: 15px;
-            color: white;
+            color: white; /* Keeping this white for contrast */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         /* Card Section Styles */
@@ -156,22 +181,97 @@
 
         /* Footer Styles */
         footer {
-            background-color: white;
-            padding: 20px 0;
-            text-align: center;
-            border-top: 1px solid #eee;
+            flex-shrink: 0;
+            width: 100%;
+            margin-top: auto;
+            background-color: #2d3721;
+            padding: 50px 0;
+            color: #ffffff;
         }
 
-        footer p {
-            color: #666;
-            font-size: 14px;
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .footer-column {
+            flex: 1;
+        }
+
+        .footer-column h3 {
+            color: #ffffff;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-column p {
+            color: #ffffff;
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: start;
+            gap: 8px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            opacity: 1;
         }
 
         .footer-logo {
-            font-size: 18px;
+            font-size: 24px;
             font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-column a {
+            color: #ffffff;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .footer-column a:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-column {
+                margin-bottom: 30px;
+            }
+
+            .footer-logo {
+                justify-content: center;
+            }
+
+            .footer-column p {
+                justify-content: center;
+            }
         }
 
         /* Hero Banner Overlay */
@@ -199,79 +299,393 @@
             color: #333;
             font-size: 32px;
         }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-size: 36px;
+            color: #2d3721;
+            margin-bottom: 15px;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card-title {
+            font-weight: bold;
+            color: #2d3721;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .cards-container a {
+            text-decoration: none;
+        }
+
+        .card-link {
+            text-decoration: none;
+        }
+
+        .about-section {
+            padding: 80px 0;
+            background-color: #f9f9f9;
+        }
+
+        .about-description {
+            font-size: 18px;
+            color: #666;
+            max-width: 800px;
+            margin: 20px auto 0;
+            line-height: 1.6;
+        }
+
+        .about-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 50px;
+        }
+
+        .about-content {
+            flex: 1;
+        }
+
+        .about-image {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .about-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .about-container {
+                flex-direction: column;
+            }
+
+            .about-image {
+                order: -1;
+            }
+        }
+
+        .contact-section {
+            padding: 80px 0;
+            background-color: white;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .contact-item {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .contact-icon {
+            margin-bottom: 15px;
+            color: #2d3721;
+        }
+
+        .contact-item h3 {
+            color: #2d3721;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .contact-item p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .contact-item a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .contact-item a:hover {
+            color: #2d3721;
+        }
+
+        @media (max-width: 768px) {
+            .contact-info {
+                flex-direction: column;
+            }
+            
+            .contact-item {
+                min-width: 100%;
+            }
+        }
+
+        .footer-column svg {
+            margin-top: 4px;
+        }
+
+        .footer-bottom {
+            margin-top: 40px;
+        }
+
+        .footer-divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 0 0 20px 0;
+        }
+
+        .copyright-text {
+            text-align: center;
+            color: #ffffff;
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        /* Add to your existing styles */
+        .sign-out-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+            height: 34px; /* Match height with other nav links */
+            width: 34px; /* Make it square */
+        }
+
+        .sign-out-btn:hover {
+            background-color: rgba(138, 187, 143, 0.1);
+        }
+
+        .sign-out-btn svg {
+            color: #8abb8f;
+            transition: color 0.3s;
+        }
+
+        .sign-out-btn:hover svg {
+            color: #5a7c5c;
+        }
     </style>
 </head>
 <body>
-    <!-- Header Section -->
-    <header>
-        <div class="container navbar">
-            <div class="logo">Care<span>More</span></div>
-            <div class="nav-links">
-                <a href="#">About</a>
-                <a href="#">Programs</a>
-                <a href="#">Support</a>
-                <a href="#">Details</a>
-                <a href="login.html">Login</a> <!-- Add this new link -->
-
-            </div>
-            <button class="icon-button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="9" y1="9" x2="15" y2="9"></line>
-                    <line x1="9" y1="12" x2="15" y2="12"></line>
-                    <line x1="9" y1="15" x2="15" y2="15"></line>
-                </svg>
-            </button>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h1>Smarter systems,</h1>
-            <h2>Healthier communities</h2>
-            <p>Empowering care through innovation</p>
-        </div>
-    </section>
-
-    <!-- Card Section -->
-    <section class="cards-section">
-        <div class="container">
-            <div class="cards-container">
-                           <!-- Card 1 -->
-                <a href="newindex.html" class="card-link">
-                  <div class="card">
-                      <h3>Dr. Universal</h3>
-                      <img src="mainpage img/Dr Universal.png" alt="Dr. Universal character" class="character-img">
-                      <p>Your pre-diagnosis assistant</p>
-                  </div>
-                 </a>
-
-                <!-- Card 2 -->
-                <div class="card">
-                    <h3>Ms. Carey</h3>
-                    <img src="mainpage img/Ms Carey.png" alt="Ms. Carey character" class="character-img">
-                    <p>Your appointment handler</p>
+    <div class="page-wrapper">
+        <!-- Header Section -->
+        <header>
+            <div class="container navbar">
+                <div class="logo">Care<span>More</span></div>
+                <div class="nav-links">
+                    <a href="#about">About</a>
+                    <a href="#services">Services</a>
+                    <a href="#">Support</a>
+                    <a href="#contact">Contact</a>
+                    <a href="login.html" class="sign-out-btn" title="Sign Out">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </a>
                 </div>
+                <button class="icon-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="9" y1="9" x2="15" y2="9"></line>
+                        <line x1="9" y1="12" x2="15" y2="12"></line>
+                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                    </svg>
+                </button>
+            </div>
+        </header>
 
-                <!-- Card 3 -->
-                <a href="vault.html" class="card-link">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1>Smarter systems,</h1>
+                <h2>Healthier communities</h2>
+                <p>Empowering care through innovation</p>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="cards-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Patient Dashboard</h2>
+                    <p>Welcome to your patient portal. Access our AI-powered tools to help manage your healthcare needs.</p>
+                </div>
+                <div class="cards-container">
+                    <!-- Card 1 -->
+                    <a href="Dr.Universal.html" class="card">
+                        <h3>Dr. Universal</h3>
+                        <img src="mainpage img/Dr Universal.png" alt="Dr. Universal character" class="character-img">
+                        <p class="card-title">Your pre-diagnosis assistant</p>
+                        <p class="card-description">Our AI pre-diagnosis assistant helps identify potential health concerns based on your symptoms and medical history.</p>
+                    </a>
+
+                    <!-- Card 2 -->
                     <div class="card">
+                        <h3>Ms. Carey</h3>
+                        <img src="mainpage img/Ms Carey.png" alt="Ms. Carey character" class="character-img">
+                        <p class="card-title">Your appointment handler</p>
+                        <p class="card-description">Our intelligent appointment handler finds nearby hospitals, matches your budget, and schedules appointments based on your availability.</p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <a href="vault.html" class="card">
                         <h3>Mr. Vault</h3>
                         <img src="mainpage img/Mr Vault.png" alt="Mr. Vault character" class="character-img">
-                        <p>Your Medical Documentator</p>
-                    </div>
-                  </a>                  
+                        <p class="card-title">Your Medical Documentator</p>
+                        <p class="card-description">Secure storage and management of your medical documents, allowing easy access and sharing with healthcare providers.</p>
+                    </a>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about-section">
+            <div class="container about-container">
+                <div class="about-content">
+                    <div class="section-header">
+                        <h2>About CareMore</h2>
+                        <p>CareMore is revolutionizing healthcare access by connecting patients with the right healthcare providers through intelligent AI solutions. Our platform streamlines the healthcare journey from initial symptom assessment to appointment scheduling and medical record management.</p>
+                        <p class="about-description">We're committed to making healthcare more accessible, efficient, and personalized for everyone.</p>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="https://www.unimelb.edu.au/__data/assets/image/0019/4003453/varieties/large.png" alt="About CareMore">
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Contact Us</h2>
+                    <p>Have questions about our services? Reach out to our support team.</p>
+                </div>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                        </div>
+                        <h3>Email</h3>
+                        <p><a href="mailto:rojakuni@gmail.com">rojakuni@gmail.com</a></p>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                        </div>
+                        <h3>Phone</h3>
+                        <p>03-7967 3502</p>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                        </div>
+                        <h3>Address</h3>
+                        <p>Universiti Malaya, 50603 Kuala Lumpur,<br>Wilayah Persekutuan Kuala Lumpur</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 
     <!-- Footer Section -->
     <footer>
-        <div class="container">
-            <div class="footer-logo">Powered by RojakUni</div>
-            <p>&copy; 2025 CareMore. All rights reserved.</p>
+        <div class="container footer-content">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    CareMore <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff" stroke="currentColor" stroke-width="2">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </div>
+                <p>Providing quality healthcare services with a focus on patient-centered care and excellence in medical practice.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="Dr.Universal.html">Dr. Universal</a></li>
+                    <li><a href="#">Ms. Carey</a></li>
+                    <li><a href="vault.html">Mr. Vault</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    Universiti Malaya,<br>
+                    50603 Kuala Lumpur,<br>
+                    Wilayah Persekutuan Kuala Lumpur.
+                </p>
+                <p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    03-7967 3502
+                </p>
+                <p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <a href="mailto:rojakuni@gmail.com">rojakuni@gmail.com</a>
+                </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <hr class="footer-divider">
+                <p class="copyright-text">© 2025 CareMore. Powered by RojakUni. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 </body>
