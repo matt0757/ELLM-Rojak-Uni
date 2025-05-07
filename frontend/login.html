@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediConnect | Login</title>
+    <style>
+        :root {
+            --primary: #2c6fb0;
+            --primary-dark: #1e5a94;
+            --secondary: #4ec093;
+            --secondary-dark: #3aa77c;
+            --light-gray: #f5f7fa;
+            --dark-gray: #667788;
+            --danger: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-gray);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background-color: var(--primary);
+            border-radius: 8px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 24px;
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .card-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        
+        .card-header p {
+            opacity: 0.9;
+            font-size: 15px;
+        }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+        
+        .tab-button {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 14px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            transition: all 0.2s;
+        }
+        
+        .tab-button.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: white;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23667788' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--secondary-dark);
+        }
+        
+        .help-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+        
+        .help-text a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .form-check input {
+            margin-right: 8px;
+        }
+        
+        .form-check label {
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+        
+        .forgot-password {
+            display: block;
+            text-align: right;
+            text-decoration: none;
+            color: var(--primary);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .error-message {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 6px;
+            display: none;
+        }
+        
+        .success-message {
+            display: none;
+            padding: 14px;
+            background-color: rgba(46, 204, 113, 0.15);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            color: #27ae60;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .footer {
+            padding: 20px 0;
+            text-align: center;
+            font-size: 14px;
+            color: var(--dark-gray);
+            background-color: white;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                </div>
+                MediConnect
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="card">
+            <div class="card-header">
+                <h1>Welcome to MediConnect</h1>
+                <p>Sign in to connect with healthcare professionals</p>
+            </div>
+            <div class="card-body">
+                <div class="tab-buttons">
+                    <button class="tab-button active" data-tab="login">Sign In</button>
+                    <button class="tab-button" data-tab="register">Register</button>
+                </div>
+
+                <div class="success-message" id="success-message">
+                    Login successful! Redirecting to dashboard...
+                </div>
+
+                <!-- Login Form -->
+                <div class="tab-content active" id="login-content">
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Email Address</label>
+                            <input type="email" class="form-input" id="login-email" placeholder="name@example.com" required>
+                            <div class="error-message" id="login-email-error">Please enter a valid email address</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="login-password">Password</label>
+                            <input type="password" class="form-input" id="login-password" placeholder="Enter your password" required>
+                            <div class="error-message" id="login-password-error">Password must be at least 8 characters</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="login-type">I am a</label>
+                            <select class="form-select" id="login-type">
+                                <option value="patient">Patient</option>
+                                <option value="clinician">Clinician</option>
+                            </select>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" id="remember-me">
+                            <label for="remember-me">Remember me</label>
+                        </div>
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                        <button type="submit" class="btn">Sign In</button>
+                    </form>
+                    <p class="help-text">Don't have an account? <a href="#" class="register-link">Register now</a></p>
+                </div>
+
+                <!-- Register Form -->
+                <div class="tab-content" id="register-content">
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label class="form-label" for="register-type">I want to register as a</label>
+                            <select class="form-select" id="register-type">
+                                <option value="patient">Patient</option>
+                                <option value="clinician">Clinician</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="register-name">Full Name</label>
+                            <input type="text" class="form-input" id="register-name" placeholder="Enter your full name" required>
+                            <div class="error-message" id="register-name-error">Please enter your full name</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="register-email">Email Address</label>
+                            <input type="email" class="form-input" id="register-email" placeholder="name@example.com" required>
+                            <div class="error-message" id="register-email-error">Please enter a valid email address</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="register-password">Create Password</label>
+                            <input type="password" class="form-input" id="register-password" placeholder="Create a strong password" required>
+                            <div class="error-message" id="register-password-error">Password must be at least 8 characters</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="register-confirm-password">Confirm Password</label>
+                            <input type="password" class="form-input" id="register-confirm-password" placeholder="Confirm your password" required>
+                            <div class="error-message" id="register-confirm-password-error">Passwords do not match</div>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" id="terms-check" required>
+                            <label for="terms-check">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                            <div class="error-message" id="terms-error">You must agree to the terms</div>
+                        </div>
+                        <button type="submit" class="btn btn-secondary">Create Account</button>
+                    </form>
+                    <p class="help-text">Already have an account? <a href="#" class="login-link">Sign in</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 MediConnect. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // API base URL - change this to your server address when deployed
+        const API_BASE_URL = 'http://localhost:5000/api';
+
+        // Tab switching functionality
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const registerLink = document.querySelector('.register-link');
+        const loginLink = document.querySelector('.login-link');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const successMessage = document.getElementById('success-message');
+
+        // Create a function to show error messages
+        function showErrorNotification(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            successMessage.style.backgroundColor = 'rgba(231, 76, 60, 0.15)';
+            successMessage.style.borderColor = 'rgba(231, 76, 60, 0.3)';
+            successMessage.style.color = '#e74c3c';
+        }
+        
+        // Create a function to show success messages
+        function showSuccessNotification(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            successMessage.style.backgroundColor = 'rgba(46, 204, 113, 0.15)';
+            successMessage.style.borderColor = 'rgba(46, 204, 113, 0.3)';
+            successMessage.style.color = '#27ae60';
+        }
+
+        // Tab switching
+        function switchTab(tabId) {
+            // Hide any previous notifications
+            successMessage.style.display = 'none';
+            
+            tabButtons.forEach(button => {
+                button.classList.toggle('active', button.getAttribute('data-tab') === tabId);
+            });
+            
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === `${tabId}-content`) {
+                    content.classList.add('active');
+                }
+            });
+        }
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                switchTab(tabId);
+            });
+        });
+
+        registerLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchTab('register');
+        });
+
+        loginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchTab('login');
+        });
+
+        // Form validation and submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const type = document.getElementById('login-type').value;
+            let isValid = true;
+            
+            // Reset error messages
+            document.getElementById('login-email-error').style.display = 'none';
+            document.getElementById('login-password-error').style.display = 'none';
+            
+            if (!validateEmail(email)) {
+                document.getElementById('login-email-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (password.length < 8) {
+                document.getElementById('login-password-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                try {
+                    // Show loading state
+                    const loginButton = loginForm.querySelector('button[type="submit"]');
+                    const originalButtonText = loginButton.textContent;
+                    loginButton.textContent = 'Signing in...';
+                    loginButton.disabled = true;
+                    
+                    // Send login request to MongoDB backend
+                    const response = await fetch(`${API_BASE_URL}/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password, type })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    // Reset button state
+                    loginButton.textContent = originalButtonText;
+                    loginButton.disabled = false;
+                    
+                    if (data.success) {
+                        // Login successful
+                        showSuccessNotification('Login successful! Redirecting to dashboard...');
+                        
+                        // Store user info in session storage
+                        sessionStorage.setItem('currentUser', JSON.stringify(data.user));
+                        
+                        setTimeout(() => {
+                            // Redirect to main page based on user type
+                            window.location.href = `mainpage.html?type=${type}`;
+                        }, 2000);
+                    } else {
+                        // Login failed
+                        showErrorNotification(data.message);
+                        
+                        // If user not found, suggest registration
+                        if (data.message.includes('not found')) {
+                            setTimeout(() => {
+                                switchTab('register');
+                                document.getElementById('register-email').value = email;
+                                document.getElementById('register-type').value = type;
+                            }, 1500);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showErrorNotification('Server error. Please try again later.');
+                }
+            }
+        });
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+            const termsChecked = document.getElementById('terms-check').checked;
+            const type = document.getElementById('register-type').value;
+            let isValid = true;
+            
+            // Reset error messages
+            document.getElementById('register-name-error').style.display = 'none';
+            document.getElementById('register-email-error').style.display = 'none';
+            document.getElementById('register-password-error').style.display = 'none';
+            document.getElementById('register-confirm-password-error').style.display = 'none';
+            document.getElementById('terms-error').style.display = 'none';
+            
+            if (name.trim() === '') {
+                document.getElementById('register-name-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!validateEmail(email)) {
+                document.getElementById('register-email-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (password.length < 8) {
+                document.getElementById('register-password-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (password !== confirmPassword) {
+                document.getElementById('register-confirm-password-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!termsChecked) {
+                document.getElementById('terms-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                try {
+                    // Show loading state
+                    const registerButton = registerForm.querySelector('button[type="submit"]');
+                    const originalButtonText = registerButton.textContent;
+                    registerButton.textContent = 'Creating Account...';
+                    registerButton.disabled = true;
+                    
+                    // Send registration request to MongoDB backend
+                    const response = await fetch(`${API_BASE_URL}/register`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name, email, password, type })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    // Reset button state
+                    registerButton.textContent = originalButtonText;
+                    registerButton.disabled = false;
+                    
+                    if (data.success) {
+                        // Registration successful
+                        showSuccessNotification('Registration successful! You can now log in.');
+                        
+                        // Switch to login tab and pre-fill email
+                        setTimeout(() => {
+                            switchTab('login');
+                            document.getElementById('login-email').value = email;
+                            document.getElementById('login-type').value = type;
+                        }, 2000);
+                    } else {
+                        // Registration failed
+                        showErrorNotification(data.message);
+                    }
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    showErrorNotification('Server error. Please try again later.');
+                }
+            }
+        });
+
+        // Email validation helper
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+    </script>
+</body>
+</html>

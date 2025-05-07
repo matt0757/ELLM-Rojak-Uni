@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multilingual Medical Assistant Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #chat-container {
+            width: 90%;
+            max-width: 1000px;
+            height: 80vh;
+            display: flex;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #sidebar {
+            width: 25%;
+            background-color: #fafafa;
+            padding: 20px;
+            border-right: 1px solid #eee;
+        }
+
+        #chat-area {
+            width: 75%;
+            display: flex;
+            flex-direction: column;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), 
+                              repeating-linear-gradient(#f9f9b0, #f9f9b0 1px, transparent 1px, transparent 20px),
+                              repeating-linear-gradient(90deg, #f9f9b0, #f9f9b0 1px, transparent 1px, transparent 20px);
+        }
+
+        #chat-header {
+            padding: 15px;
+            background-color: #ffeb3b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        #chat-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        #chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        #input-area {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 15px;
+            border-radius: 30px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        #send-button {
+            margin-left: 10px;
+            background-color: #ffeb3b;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            background-color: #f5f5f5;
+        }
+
+        .ai-avatar {
+            background-color: #ffeb3b;
+        }
+
+        .message-bubble {
+            padding: 12px 15px;
+            border-radius: 18px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            margin-left: auto;
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        .user-message .avatar {
+            margin-left: 10px;
+            margin-right: 0;
+        }
+
+        .user-message .message-bubble {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+        }
+
+        .ai-message .message-bubble {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+        }
+
+        #chat-history-label {
+            padding: 10px;
+            background-color: #f5f5f5;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .language-options {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .language-btn {
+            padding: 5px 10px;
+            border: none;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .language-btn.active {
+            background-color: #ffeb3b;
+        }
+
+        .welcome-message {
+            padding: 5px 0;
+        }
+
+        .welcome-message div {
+            margin: 5px 0;
+        }
+
+        /* For hiding elements initially */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="sidebar">
+            <div id="chat-history-label">Chat History here</div>
+            <!-- Chat history will be displayed here -->
+        </div>
+        <div id="chat-area">
+            <div id="chat-box">
+                <div class="message ai-message">
+                    <div class="avatar ai-avatar">👨‍⚕️</div>
+                    <div class="message-bubble welcome-message">
+                        <div id="welcome-en">
+                            Welcome to the Medical Assistant! Describe your symptoms, and I'll give you advice on whether you should:
+                            <br>A) Stay home and monitor 
+                            <br>B) Go to a clinic
+                            <br>C) Visit the hospital urgently
+                        </div>
+                        <div id="welcome-ms" class="hidden">
+                            Selamat datang ke Pembantu Perubatan! Jelaskan gejala anda, dan saya akan memberi nasihat sama ada anda harus:
+                            <br>A) Tinggal di rumah dan pantau
+                            <br>B) Pergi ke klinik
+                            <br>C) Lawat hospital dengan segera
+                        </div>
+                        <div id="welcome-zh" class="hidden">
+                            欢迎使用医疗助手！描述您的症状，我会给您建议是否应该：
+                            <br>A) 留在家中并监测
+                            <br>B) 去诊所就诊
+                            <br>C) 紧急去医院
+                        </div>
+                        <div id="welcome-ta" class="hidden">
+                            மருத்துவ உதவியாளருக்கு வரவேற்கிறோம்! உங்கள் அறிகுறிகளை விவரிக்கவும், நீங்கள் என்ன செய்ய வேண்டும் என்பதை பற்றி நான் உங்களுக்கு ஆலோசனை தருவேன்:
+                            <br>A) வீட்டில் இருந்து கண்காணிக்கவும்
+                            <br>B) மருத்துவமனைக்குச் செல்லவும்
+                            <br>C) அவசரமாக மருத்துவமனைக்குச் செல்லவும்
+                        </div>
+                    </div>
+                </div>
+                <!-- Chat messages will appear here -->
+            </div>
+            <div id="input-area">
+                <input type="text" id="user-input" placeholder="Tell me your symptoms..." />
+                <button id="send-button">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="language-options">
+        <button class="language-btn active" data-lang="en">English</button>
+        <button class="language-btn" data-lang="ms">Bahasa Melayu</button>
+        <button class="language-btn" data-lang="zh">中文</button>
+        <button class="language-btn" data-lang="ta">தமிழ்</button>
+        <button id="clear-button">Clear Chat</button>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const clearButton = document.getElementById('clear-button');
+        const languageButtons = document.querySelectorAll('.language-btn');
+        let currentLanguage = 'en';
+        let isWaitingForResponse = false;
+        
+        // Update placeholders based on language
+        function updatePlaceholder(lang) {
+            const placeholders = {
+                'en': 'Tell me your symptoms...',
+                'ms': 'Jelaskan gejala anda di sini...',
+                'zh': '在这里描述您的症状...',
+                'ta': 'உங்கள் அறிகுறிகளை இங்கே விவரிக்கவும்...'
+            };
+            userInput.placeholder = placeholders[lang] || placeholders['en'];
+        }
+        
+        // Change language selection
+        languageButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active button
+                languageButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Set current language
+                currentLanguage = this.getAttribute('data-lang');
+                
+                // Update placeholder
+                updatePlaceholder(currentLanguage);
+                
+                // Update welcome message visibility
+                document.querySelectorAll('.welcome-message > div').forEach(div => {
+                    div.classList.add('hidden');
+                });
+                document.getElementById('welcome-' + currentLanguage).classList.remove('hidden');
+            });
+        });
+
+        // Function to add a message to the chat box
+        function addMessage(content, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            
+            if (sender === 'user') {
+                messageDiv.classList.add('user-message');
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.classList.add('avatar', 'user-avatar');
+                avatarDiv.textContent = '👤';
+                messageDiv.appendChild(avatarDiv);
+            } else {
+                messageDiv.classList.add('ai-message');
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.classList.add('avatar', 'ai-avatar');
+                avatarDiv.textContent = '👨‍⚕️';
+                messageDiv.appendChild(avatarDiv);
+            }
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.classList.add('message-bubble');
+            bubbleDiv.textContent = content;
+            messageDiv.appendChild(bubbleDiv);
+            
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to bottom
+        }
+
+        // Function to show loading indicator
+        function showLoading() {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.classList.add('message', 'ai-message');
+            loadingDiv.id = 'loading-indicator';
+            
+            const avatarDiv = document.createElement('div');
+            avatarDiv.classList.add('avatar', 'ai-avatar');
+            avatarDiv.textContent = '👨‍⚕️';
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.classList.add('message-bubble');
+            bubbleDiv.textContent = '...';
+            
+            loadingDiv.appendChild(avatarDiv);
+            loadingDiv.appendChild(bubbleDiv);
+            
+            chatBox.appendChild(loadingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Function to remove loading indicator
+        function hideLoading() {
+            const loadingDiv = document.getElementById('loading-indicator');
+            if (loadingDiv) {
+                loadingDiv.remove();
+            }
+        }
+
+        // Function to handle sending a message
+        async function sendMessage() {
+            const userMessage = userInput.value.trim();
+            if (!userMessage || isWaitingForResponse) return;
+
+            isWaitingForResponse = true;
+
+            // Add user's message to the chat
+            addMessage(userMessage, 'user');
+            userInput.value = '';
+
+            // Show loading indicator
+            showLoading();
+
+            // Send the message to the backend API
+            try {
+                const response = await fetch('http://localhost:5000/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        message: userMessage,
+                        language: currentLanguage
+                    }),
+                });
+
+                // Hide loading indicator
+                hideLoading();
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch response from the server.');
+                }
+
+                const data = await response.json();
+                const aiMessage = data.response;
+                
+                // Update current language if it was detected differently
+                if (data.language && data.language !== currentLanguage) {
+                    currentLanguage = data.language;
+                    // Update UI language selection
+                    languageButtons.forEach(btn => {
+                        if (btn.getAttribute('data-lang') === currentLanguage) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+                    updatePlaceholder(currentLanguage);
+                }
+
+                // Add AI's response to the chat
+                addMessage(aiMessage, 'ai');
+            } catch (error) {
+                hideLoading();
+                console.error('Error:', error);
+                addMessage('Error: Unable to fetch response from the server. Please try again.', 'ai');
+            } finally {
+                isWaitingForResponse = false;
+            }
+        }
+
+        // Function to clear chat history
+        async function clearChat() {
+            try {
+                const response = await fetch('http://localhost:5000/clear', {
+                    method: 'POST',
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to clear chat history.');
+                }
+                
+                // Clear the chat box except for welcome message
+                chatBox.innerHTML = '';
+                
+                // Add welcome message back
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.classList.add('message', 'ai-message');
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.classList.add('avatar', 'ai-avatar');
+                avatarDiv.textContent = '👨‍⚕️';
+                
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.classList.add('message-bubble', 'welcome-message');
+                
+                // Create language-specific welcome messages
+                const languages = ['en', 'ms', 'zh', 'ta'];
+                languages.forEach(lang => {
+                    const langDiv = document.createElement('div');
+                    langDiv.id = 'welcome-' + lang;
+                    if (lang !== currentLanguage) {
+                        langDiv.classList.add('hidden');
+                    }
+                    
+                    // Copy content from original welcome messages
+                    const originalWelcome = document.getElementById('welcome-' + lang);
+                    langDiv.innerHTML = originalWelcome.innerHTML;
+                    
+                    bubbleDiv.appendChild(langDiv);
+                });
+                
+                welcomeDiv.appendChild(avatarDiv);
+                welcomeDiv.appendChild(bubbleDiv);
+                chatBox.appendChild(welcomeDiv);
+                
+                // Also clear the sidebar chat history
+                const sidebar = document.getElementById('sidebar');
+                const historyLabel = document.getElementById('chat-history-label');
+                sidebar.innerHTML = '';
+                sidebar.appendChild(historyLabel);
+                
+            } catch (error) {
+                console.error('Error clearing chat:', error);
+                alert('Failed to clear chat history.');
+            }
+        }
+
+        // Function to update sidebar chat history
+        function updateSidebar(content, sender) {
+            const historyItem = document.createElement('div');
+            historyItem.classList.add('history-item');
+            
+            // Truncate long messages for sidebar
+            const shortContent = content.length > 30 ? content.substring(0, 30) + '...' : content;
+            
+            historyItem.textContent = (sender === 'user' ? 'You: ' : 'Dr: ') + shortContent;
+            
+            // Insert after the label
+            const sidebar = document.getElementById('sidebar');
+            const historyLabel = document.getElementById('chat-history-label');
+            
+            // Insert after the label
+            if (sidebar.childNodes.length > 1) {
+                sidebar.insertBefore(historyItem, historyLabel.nextSibling);
+            } else {
+                sidebar.appendChild(historyItem);
+            }
+        }
+
+        // Load chat history when the page loads
+        async function loadChatHistory() {
+            try {
+                const response = await fetch('http://localhost:5000/history');
+                if (!response.ok) {
+                    return;
+                }
+                
+                const data = await response.json();
+                const history = data.history;
+                
+                // Display chat history if there is any
+                if (history && history.length > 0) {
+                    // Clear the default welcome message
+                    chatBox.innerHTML = '';
+                    
+                    // Add each message from the history
+                    history.forEach(msg => {
+                        const role = msg.role === 'user' ? 'user' : 'ai';
+                        addMessage(msg.content, role);
+                        updateSidebar(msg.content, role);
+                        
+                        // Update language if needed
+                        if (msg.language) {
+                            currentLanguage = msg.language;
+                        }
+                    });
+                    
+                    // Update UI for correct language
+                    languageButtons.forEach(btn => {
+                        if (btn.getAttribute('data-lang') === currentLanguage) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+                    updatePlaceholder(currentLanguage);
+                }
+            } catch (error) {
+                console.error('Error loading chat history:', error);
+            }
+        }
+
+        // Event listeners
+        sendButton.addEventListener('click', sendMessage);
+        clearButton.addEventListener('click', clearChat);
+        
+        // Event listener for pressing Enter in the input box
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initialize
+        updatePlaceholder(currentLanguage);
+        loadChatHistory();
+    </script>
+</body>
+</html>
