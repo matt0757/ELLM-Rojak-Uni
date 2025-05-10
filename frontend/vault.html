@@ -598,29 +598,7 @@
     </div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    // Import Firebase functions
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
-  
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyBPeaDGjtbvmrhCY_7YEaTxDN3NBHgRS14",
-      authDomain: "medical-records-5026f.firebaseapp.com",
-      projectId: "medical-records-5026f",
-      storageBucket: "medical-records-5026f.appspot.com",
-      messagingSenderId: "1084582559517",
-      appId: "1:1084582559517:web:c40d74ba2149e52b40abf4",
-      measurementId: "G-ZC2K1ZW7SF"
-    };
-  
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-  
+  <script>
     // Document type config
     const documentTypes = [
       {
@@ -652,16 +630,15 @@
     // Initialize file storage for each document type
     const fileStorage = {};
     documentTypes.forEach(type => {
-      fileStorage[type.id] = {
-        files: [],
-        urls: [],
-        names: []
-      };
+        fileStorage[type.id] = {
+            files: [],
+            names: []
+        };
     });
     
     // Set up file upload handling for each document type
     documentTypes.forEach(type => {
-      setupFileUpload(type);
+        setupFileUpload(type);
     });
     
     function setupFileUpload(docType) {
