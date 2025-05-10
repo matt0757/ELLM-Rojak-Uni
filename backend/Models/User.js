@@ -51,6 +51,52 @@ const UserSchema = new mongoose.Schema({
             endTime: String
         }]
     },
+    appointments: [{
+        fullname: {
+            type: String,
+            required: true
+        },
+        email: {
+            type: String,
+            required: true
+        },
+        phone: {
+            type: String,
+            required: true
+        },
+        date: {
+            type: Date,
+            required: true
+        },
+        time: {
+            type: String,
+            required: true
+        },
+        status: {
+            type: String,
+            enum: ['scheduled', 'completed', 'cancelled', 'in-progress'],
+            default: 'scheduled'
+        },
+        symptoms: String,
+        urgencyLevel: {
+            type: String,
+            enum: ['routine', 'soon', 'urgent'],
+            default: 'routine'
+        },
+        hospital: {
+            type: String,
+            required: true
+        },
+        notes: {
+            type: String,
+            default: ''
+        },
+        clinicianId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: false  // Changed to false since it's assigned later
+        }
+    }],
     createdAt: {
         type: Date,
         default: Date.now

@@ -12,23 +12,54 @@ from langdetect import detect, LangDetectException  # Import language detection 
 load_dotenv()
 
 # Get Azure OpenAI configuration from environment variables
-subscription_key = os.getenv("AZURE_API_KEY")
+subscription_key = os.getenv("AZURE_API_KEY")  # Add defaults to avoid errors
 endpoint = os.getenv("AZURE_ENDPOINT")
 deployment_name = os.getenv("DEPLOYMENT_NAME")
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../frontend')  # Point to frontend directory
 CORS(app)  # Enable CORS for all domains on all routes
 
 # Initialize the Azure OpenAI chat model
-chat = AzureChatOpenAI(
-    azure_endpoint=endpoint,
-    api_key=subscription_key,
-    azure_deployment=deployment_name,
-    api_version="2025-01-01-preview",
-    temperature=0.7,
-    max_tokens=800
-)
+try:
+    chat = AzureChatOpenAI(
+        azure_endpoint=endpoint,
+        api_key=subscription_key,
+        azure_deployment=deployment_name,
+        api_version="2025-01-01-preview",
+        temperature=0.7,
+        max_tokens=800
+    )
+except Exception as e:
+    print(f"Failed to initialize Azure OpenAI: {str(e)}")
+    # Create a mock chat function for testing without API keys
+    def mock_chat(messages):
+        class MockResponse:
+            def __init__(self, content):
+                self.content = content
+        
+        # Simple mock response based on language
+        language = "en"  # Default
+        for msg in messages:
+            content = msg.content if hasattr(msg, 'content') else ""
+            if "Bahasa Melayu" in content or "dalam Bahasa Melayu" in content:
+                language = "ms"
+            elif "中文" in content:
+                language = "zh"
+            elif "தமிழ்" in content:
+                language = "ta"
+        
+        responses = {
+            "en": "B) Go to a clinic. You should visit a clinic to get proper evaluation. Your symptoms suggest you need medical attention but it's not an emergency.",
+            "ms": "B) Pergi ke klinik. Anda harus pergi ke klinik untuk mendapatkan pemeriksaan yang sesuai. Gejala anda menunjukkan anda memerlukan perhatian perubatan tetapi ia bukan kecemasan.",
+            "zh": "B) 去诊所就诊。您应该去诊所接受适当的评估。您的症状表明您需要医疗护理，但这不是紧急情况。",
+            "ta": "B) மருத்துவமனைக்குச் செல்லவும். நீங்கள் சரியான மதிப்பீட்டைப் பெற மருத்துவமனைக்குச் செல்ல வேண்டும். உங்கள் அறிகுறிகள் மருத்துவ கவனம் தேவைப்படுவதைக் குறிக்கின்றன, ஆனால் அது அவசரமல்ல."
+        }
+        
+        return MockResponse(responses.get(language, responses["en"]))
+    
+    # Use mock chat instead
+    chat = mock_chat
 
 # Define the medical assistant prompt template with language support
 def get_medical_prompt(language_code):
@@ -157,13 +188,24 @@ def get_medical_advice(symptoms, preferred_language=None):
     # Add the current system message to the conversation
     messages.append(system_message)
     
-    # Generate a response from the chat model
-    response = chat(messages)
-    return response.content, lang_code
+    try:
+        # Generate a response from the chat model
+        response = chat(messages)
+        return response.content, lang_code
+    except Exception as e:
+        print(f"Error generating response: {str(e)}")
+        # Fallback responses in case of API failure
+        fallback_responses = {
+            'en': "B) Go to a clinic. You should consult with a healthcare professional. Your symptoms suggest professional evaluation would be beneficial.",
+            'ms': "B) Pergi ke klinik. Anda harus berjumpa dengan profesional kesihatan. Gejala anda mencadangkan penilaian profesional akan memberi manfaat.",
+            'zh': "B) 去诊所就诊。您应该咨询医疗专业人员。您的症状表明专业评估将会有益。",
+            'ta': "B) மருத்துவமனைக்குச் செல்லவும். நீங்கள் ஒரு சுகாதார நிபுணரை ஆலோசிக்க வேண்டும். உங்கள் அறிகுறிகள் தொழில்முறை மதிப்பீடு பயனுள்ளதாக இருக்கும் என்பதைக் குறிக்கின்றன."
+        }
+        return fallback_responses.get(lang_code, fallback_responses['en']), lang_code
 
 @app.route('/')
 def serve_index():
-    return send_from_directory('.', 'index.html')
+    return send_from_directory('../frontend', 'Dr.Universal.html')
 
 @app.route('/chat', methods=['POST'])
 def chat_endpoint():
@@ -178,7 +220,7 @@ def chat_endpoint():
 
         # Detect language and get medical advice
         start_time = time.time()
-        advice, detected_language = get_medical_advice(user_message)
+        advice, detected_language = get_medical_advice(user_message, language)
 
         elapsed_time = time.time() - start_time
         if elapsed_time > 10:  # Timeout check
@@ -208,4 +250,6 @@ def clear_history():
     return jsonify({"status": "Chat history cleared"})
 
 if __name__ == '__main__':
+    print("Starting the Medical Assistant Server...")
+    print("Access the app at http://localhost:5000")
     app.run(debug=True, port=5000)

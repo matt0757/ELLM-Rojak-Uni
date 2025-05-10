@@ -6,10 +6,10 @@
     <title>CareMore | Login</title>
     <style>
         :root {
-            --primary: #2c6fb0;
-            --primary-dark: #1e5a94;
-            --secondary: #4ec093;
-            --secondary-dark: #3aa77c;
+            --primary: #2c6fb0;      /* Main blue */
+            --primary-dark: #1e5a94; /* Darker blue for hover */
+            --secondary: #4e90c0;    /* Changed from green to lighter blue */
+            --secondary-dark: #3a7aa7; /* Darker version of secondary blue */
             --light-gray: #f5f7fa;
             --dark-gray: #667788;
             --danger: #e74c3c;
@@ -44,7 +44,7 @@
         .logo {
             font-size: 24px;
             font-weight: bold;
-            color: var(--primary);
+            color: #111 !important; /* Changed from var(--primary) to black */
             display: flex;
             align-items: center;
             gap: 10px;
@@ -53,12 +53,14 @@
         .logo-icon {
             width: 32px;
             height: 32px;
-            background-color: var(--primary);
             border-radius: 8px;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         main {
@@ -269,9 +271,7 @@
         <div class="container">
             <div class="logo">
                 <div class="logo-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-                    </svg>
+                    <img src = "logo img/Blue and White Circle Surfing Club Logo.jpg" alt="CareMore Icon" width = "32" height = "32">
                 </div>
                 CareMore
             </div>
@@ -369,7 +369,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy;© 2025 CareMore. Powered by RojakUni. All rights reserved.</p>
+            <p>© 2025 CareMore. Powered by RojakUni. All rights reserved.</p>
         </div>
     </footer>
 
@@ -441,77 +441,43 @@
         // Form validation and submission
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
             const type = document.getElementById('login-type').value;
-            let isValid = true;
-            
-            // Reset error messages
-            document.getElementById('login-email-error').style.display = 'none';
-            document.getElementById('login-password-error').style.display = 'none';
-            
-            if (!validateEmail(email)) {
-                document.getElementById('login-email-error').style.display = 'block';
-                isValid = false;
-            }
-            
-            if (password.length < 8) {
-                document.getElementById('login-password-error').style.display = 'block';
-                isValid = false;
-            }
-            
-            if (isValid) {
-                try {
-                    // Show loading state
-                    const loginButton = loginForm.querySelector('button[type="submit"]');
-                    const originalButtonText = loginButton.textContent;
-                    loginButton.textContent = 'Signing in...';
-                    loginButton.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password, type })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Store session data
+                    sessionStorage.setItem('currentUser', JSON.stringify(data.user));
+                    sessionStorage.setItem('token', data.token);
+                    sessionStorage.setItem('userType', data.user.type);
+
+                    showSuccessNotification('Login successful! Redirecting...');
                     
-                    // Send login request to MongoDB backend
-                    const response = await fetch(`${API_BASE_URL}/login`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ email, password, type })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    // Reset button state
-                    loginButton.textContent = originalButtonText;
-                    loginButton.disabled = false;
-                    
-                    if (data.success) {
-                        // Login successful
-                        showSuccessNotification('Login successful! Redirecting to dashboard...');
-                        
-                        // Store user info in session storage
-                        sessionStorage.setItem('currentUser', JSON.stringify(data.user));
-                        
-                        setTimeout(() => {
-                            // Redirect to main page based on user type
-                            window.location.href = `mainpage.html?type=${type}`;
-                        }, 2000);
-                    } else {
-                        // Login failed
-                        showErrorNotification(data.message);
-                        
-                        // If user not found, suggest registration
-                        if (data.message.includes('not found')) {
-                            setTimeout(() => {
-                                switchTab('register');
-                                document.getElementById('register-email').value = email;
-                                document.getElementById('register-type').value = type;
-                            }, 1500);
+                    // Redirect based on user type
+                    setTimeout(() => {
+                        if (data.user.type === 'clinician') {
+                            window.location.href = 'clinician.html';
+                        } else {
+                            window.location.href = 'mainpage.html';
                         }
-                    }
-                } catch (error) {
-                    console.error('Login error:', error);
-                    showErrorNotification('Server error. Please try again later.');
+                    }, 1500);
+                } else {
+                    showErrorNotification(data.message || 'Login failed');
                 }
+            } catch (error) {
+                console.error('Login error:', error);
+                showErrorNotification('Server error. Please try again later.');
             }
         });
 
@@ -607,6 +573,51 @@
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(email);
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get userType from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const userType = urlParams.get('userType');
+            
+            // If userType exists, select the appropriate radio button
+            if (userType) {
+                const radioButton = document.querySelector(`input[type="radio"][value="${userType}"]`);
+                if (radioButton) {
+                    radioButton.checked = true;
+                    // Trigger any existing change handlers
+                    radioButton.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get userType from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const userType = urlParams.get('userType');
+            
+            // If userType exists, update both login and register form selects
+            if (userType) {
+                // Map the userType from selection.html to match login.html values
+                const typeMap = {
+                    'user': 'patient',
+                    'clinician': 'clinician'
+                };
+                
+                const mappedType = typeMap[userType];
+                
+                // Update login form select
+                const loginSelect = document.getElementById('login-type');
+                if (loginSelect && mappedType) {
+                    loginSelect.value = mappedType;
+                }
+                
+                // Update register form select
+                const registerSelect = document.getElementById('register-type');
+                if (registerSelect && mappedType) {
+                    registerSelect.value = mappedType;
+                }
+            }
+        });
     </script>
 </body>
 </html>

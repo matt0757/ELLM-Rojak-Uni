@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CareMore - Smarter systems, Healthier communities</title>
+    <title>CareMore | Smarter systems, Healthier communities</title>
     <style>
         * {
             margin: 0;
@@ -55,6 +55,16 @@
             font-size: 28px;
             font-weight: bold;
             color: #2d3721;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            object-fit: cover;
         }
 
         .logo span {
@@ -70,20 +80,20 @@
 
         .nav-links a {
             text-decoration: none;
-            color: #8abb8f;
+            color: #2c6fb0; /* Blue */
             font-weight: 500;
             transition: color 0.3s;
-            display: flex; /* Add this for consistent alignment */
-            align-items: center; /* Add this for vertical alignment */
-            height: 34px; /* Add fixed height to match sign-out button */
+            display: flex;
+            align-items: center;
+            height: 34px;
         }
 
         .nav-links a:hover {
-            color: #5a7c5c;
+            color: #1e5a94; /* Darker blue on hover */
         }
 
         .icon-button {
-            background-color: #8ee0a1;
+            background-color: #2c6fb0;
             color: white;
             border: none;
             border-radius: 5px;
@@ -113,16 +123,16 @@
         .hero h1 {
             font-size: 28px; /* Adjusted font size */
             margin-bottom: 8px;
-            color: #00E676; /* Bright mint green */
+            color:  #85c8ff; /* Bright blue */
             font-weight: bold;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* Added shadow for better readability */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15); /* Optional: subtle shadow for readability */
         }
         
         .hero h2 {
             font-size: 30px; /* Adjusted font size */
             margin-bottom: 15px;
-            color: #00E676; /* Matching bright mint green */
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            color: #85c8ff; /* Bright blue */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15); /* Optional: subtle shadow for readability */
         }
         
         .hero p {
@@ -490,16 +500,18 @@
         }
 
         .sign-out-btn:hover {
-            background-color: rgba(138, 187, 143, 0.1);
+            background-color: #c3e0fa; /* Slightly darker blue on hover */
         }
 
         .sign-out-btn svg {
-            color: #8abb8f;
-            transition: color 0.3s;
+            color: #2c6fb0; /* Blue icon */
+            stroke: #2c6fb0; /* Blue stroke for SVG */
+            transition: color 0.3s, stroke 0.3s;
         }
 
         .sign-out-btn:hover svg {
-            color: #5a7c5c;
+            color: #1e5a94;
+            stroke: #1e5a94;
         }
     </style>
 </head>
@@ -508,7 +520,10 @@
         <!-- Header Section -->
         <header>
             <div class="container navbar">
-                <div class="logo">Care<span>More</span></div>
+                <div class="logo">
+                    <img src = "logo img/Blue and White Circle Surfing Club Logo.jpg" alt = "CareMore Icon" class = "logo-icon">
+                    Care<span>More</span>
+                </div>
                 <div class="nav-links">
                     <a href="#about">About</a>
                     <a href="#services">Services</a>
@@ -688,5 +703,23 @@
             </div>
         </div>
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const currentUser = sessionStorage.getItem('currentUser');
+            const token = sessionStorage.getItem('token');
+            
+            if (!currentUser || !token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Add click handler for booking appointment button
+            document.querySelector('.book-appointment-btn').addEventListener('click', function() {
+                // Session data will automatically carry over since we're using sessionStorage
+                window.location.href = 'Ms.Carey.html';
+            });
+        });
+    </script>
 </body>
 </html>

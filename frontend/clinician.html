@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareMore | Clinician Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #4f46e5;
+      --primary-hover: #4338ca;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-500: #6b7280;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --green-100: #dcfce7;
+      --green-800: #166534;
+      --yellow-100: #fef9c3;
+      --yellow-800: #854d0e;
+      --blue-100: #dbeafe;
+      --blue-800: #1e40af;
+      --red-100: #fee2e2;
+      --red-800: #991b1b;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    
+    body {
+      background-color: var(--gray-50);
+      color: var(--gray-800);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    header {
+      background-color: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 1rem;
+    }
+    
+    .header-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--gray-900);
+    }
+    
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .avatar {
+      height: 2rem;
+      width: 2rem;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+    }
+    
+    main {
+      flex-grow: 1;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--gray-200);
+      margin-bottom: 1.5rem;
+    }
+    
+    .tab {
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gray-500);
+      transition: color 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .tab:hover {
+      color: var(--gray-700);
+    }
+    
+    .tab.active {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+    }
+    
+    .tab i {
+      font-size: 0.875rem;
+    }
+    
+    .tab-content {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+    }
+    
+    .tab-pane {
+      display: none;
+    }
+    
+    .tab-pane.active {
+      display: block;
+    }
+    
+    .header-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .header-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    button {
+      cursor: pointer;
+    }
+    
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: 1px solid var(--gray-300);
+      background-color: white;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn:hover {
+      background-color: var(--gray-50);
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th {
+      padding: 0.75rem 1.5rem;
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      background-color: var(--gray-50);
+    }
+    
+    td {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--gray-200);
+    }
+    
+    .time-cell {
+      display: flex;
+      align-items: center;
+    }
+    
+    .time-cell i {
+      color: var(--gray-500);
+      margin-right: 0.5rem;
+      font-size: 0.875rem;
+    }
+    
+    .status-badge {
+      display: inline-flex;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .status-completed {
+      background-color: var(--green-100);
+      color: var (--green-800);
+    }
+    
+    .status-in-progress {
+      background-color: var(--blue-100);
+      color: var(--blue-800);
+    }
+    
+    .status-upcoming {
+      background-color: var(--yellow-100);
+      color: var(--yellow-800);
+    }
+    
+    .status-cancelled {
+      background-color: var(--red-100);
+      color: var (--red-800);
+    }
+    
+    .actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+    
+    .action-link {
+      color: var(--primary-color);
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    
+    .action-link:hover {
+      color: var(--primary-hover);
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background-color: white;
+      border-radius: 0.5rem;
+      max-width: 42rem;
+      width: 100%;
+      padding: 1.5rem;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .modal-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      color: var(--gray-500);
+      cursor: pointer;
+    }
+    
+    .modal-close:hover {
+      color: var(--gray-700);
+    }
+    
+    .modal-field {
+      margin-bottom: 1rem;
+    }
+    
+    .field-label {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--gray-500);
+      margin-bottom: 0.25rem;
+    }
+    
+    .field-value {
+      font-weight: 500;
+    }
+    
+    .patient-message {
+      padding: 0.75rem;
+      background-color: var(--gray-50);
+      border-radius: 0.375rem;
+    }
+    
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end; /* Changed from space-between to flex-end */
+      margin-top: 1rem;
+      align-items: center;
+    }
+    
+    .modal-footer .btn {
+      min-width: 120px;
+      margin-left: auto; /* Add this to push button to the right */
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      margin-bottom: 0.25rem;
+    }
+    
+    .form-control {
+      display: block;
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--gray-300);
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+    }
+    
+    .search-form {
+      display: flex;
+    }
+    
+    .search-form .form-control {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    
+    .search-form .btn {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    
+    .patient-card {
+      background-color: var(--gray-50);
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .patient-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .patient-avatar {
+      height: 3rem;
+      width: 3rem;
+      border-radius: 9999px;
+      background-color: var(--gray-300);
+      color: var(--gray-600);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+    }
+    
+    .patient-info h3 {
+      font-size: 1.125rem;
+      font-weight: 500;
+    }
+    
+    .patient-info p {
+      color: var(--gray-500);
+    }
+    
+    .section {
+      margin-bottom: 1.5rem;
+    }
+    
+    .section h4 {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      margin-bottom: 0.5rem;
+    }
+    
+    ul.item-list {
+      list-style-type: disc;
+      padding-left: 1.25rem;
+    }
+    
+    ul.item-list li {
+      margin-bottom: 0.25rem;
+    }
+    
+    .input-group {
+      margin-top: 0.75rem;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    @media (min-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    .metric-card {
+      background-color: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+    }
+    
+    .metric-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .metric-icon {
+      color: var(--primary-color);
+      margin-right: 0.5rem;
+    }
+    
+    .metric-title {
+      font-size: 1.125rem;
+      font-weight: 500;
+    }
+    
+    .metric-value {
+      font-size: 1.875rem;
+      font-weight: 700;
+    }
+    
+    .metric-period {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+      margin-top: 0.25rem;
+    }
+    
+    .chart-container {
+      margin-top: 1.5rem;
+      background-color: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+    }
+    
+    .chart-placeholder {
+      height: 16rem;
+      background-color: var(--gray-100);
+      border-radius: 0.375rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-500);
+    }
+    
+    .timeframe-selector {
+      display: inline-flex;
+      border-radius: 0.375rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      margin-bottom: 1rem;
+    }
+    
+    .timeframe-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      background-color: white;
+      border: 1px solid var(--gray-300);
+      cursor: pointer;
+    }
+    
+    .timeframe-btn:first-child {
+      border-top-left-radius: 0.375rem;
+      border-bottom-left-radius: 0.375rem;
+    }
+    
+    .timeframe-btn:last-child {
+      border-top-right-radius: 0.375rem;
+      border-bottom-right-radius: 0.375rem;
+    }
+    
+    .timeframe-btn:not(:first-child) {
+      margin-left: -1px;
+    }
+    
+    .timeframe-btn.active {
+      background-color: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+
+    .alert {
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .btn-signout {
+      padding: 0.5rem 1rem;
+      background-color: transparent;
+      border: 1px solid var(--gray-300);
+      border-radius: 0.375rem;
+      color: var(--gray-700);
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-signout:hover {
+      background-color: var(--red-100);
+      color: var(--red-800);
+      border-color: var(--red-800);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="logo">CareMore</div>
+      <div class="user-profile">
+        <span>Dr. Sarah Johnson</span>
+        <div class="avatar">SJ</div>
+        <button class="btn btn-signout" onclick="signOut()">
+            <i class="fas fa-sign-out-alt"></i>
+            Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <main>
+    <!-- Tabs -->
+    <nav class="tabs">
+      <a class="tab active" data-tab="appointments">
+        <i class="fas fa-calendar"></i>
+        Appointments
+      </a>
+      <a class="tab" data-tab="prescriptions">
+        <i class="fas fa-pills"></i>
+        Prescriptions & Allergies
+      </a>
+      <a class="tab" data-tab="analytics">
+        <i class="fas fa-chart-line"></i>
+        Analytics
+      </a>
+    </nav>
+    
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Appointments Tab -->
+      <div class="tab-pane active" id="appointments">
+        <div class="header-actions">
+          <h2 class="header-title">Today's Appointments</h2>
+          <div class="btn-group">
+            <button class="btn">
+              <i class="fas fa-chevron-left"></i>
+              Previous Day
+            </button>
+            <button class="btn btn-primary" onclick="goToToday()">
+              <i class="fas fa-calendar-day"></i>
+              Today
+            </button>
+            <button class="btn">
+              Next Day
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Patient</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="time-cell">
+                    <i class="fas fa-clock"></i>
+                    <span>09:00 AM</span>
+                  </div>
+                </td>
+                <td>John Doe</td>
+                <td>
+                  <span class="status-badge status-completed">Completed</span>
+                </td>
+                <td>
+                  <div class="actions">
+                    <a class="action-link" onclick="showAppointmentDetails(0)">View Details</a>
+                    <a class="action-link" onclick="showPatientRecords(0)">Patient Records</a>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="time-cell">
+                    <i class="fas fa-clock"></i>
+                    <span>10:30 AM</span>
+                  </div>
+                </td>
+                <td>Jane Smith</td>
+                <td>
+                  <span class="status-badge status-in-progress">In Progress</span>
+                </td>
+                <td>
+                  <div class="actions">
+                    <a class="action-link" onclick="showAppointmentDetails(1)">View Details</a>
+                    <a class="action-link" onclick="showPatientRecords(1)">Patient Records</a>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="time-cell">
+                    <i class="fas fa-clock"></i>
+                    <span>01:15 PM</span>
+                  </div>
+                </td>
+                <td>Robert Johnson</td>
+                <td>
+                  <span class="status-badge status-upcoming">Upcoming</span>
+                </td>
+                <td>
+                  <div class="actions">
+                    <a class="action-link" onclick="showAppointmentDetails(2)">View Details</a>
+                    <a class="action-link" onclick="showPatientRecords(2)">Patient Records</a>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="time-cell">
+                    <i class="fas fa-clock"></i>
+                    <span>03:00 PM</span>
+                  </div>
+                </td>
+                <td>Emily Wilson</td>
+                <td>
+                  <span class="status-badge status-cancelled">Cancelled</span>
+                </td>
+                <td>
+                  <div class="actions">
+                    <a class="action-link" onclick="showAppointmentDetails(3)">View Details</a>
+                    <a class="action-link" onclick="showPatientRecords(3)">Patient Records</a>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Prescriptions Tab -->
+      <div class="tab-pane" id="prescriptions">
+        <h2 class="header-title" style="margin-bottom: 1.5rem;">Patient Records</h2>
+        
+        <div class="form-group">
+          <label for="patient-search" class="form-label">Search Patient</label>
+          <div class="search-form">
+            <input type="text" id="patient-search" class="form-control" placeholder="Enter patient name">
+            <button class="btn btn-primary">Search</button>
+          </div>
+        </div>
+        
+        <div class="patient-card">
+          <div class="patient-header">
+            <div class="patient-avatar">JD</div>
+            <div class="patient-info">
+              <h3>John Doe</h3>
+              <p>DOB: 05/12/1980 (45 years)</p>
+            </div>
+          </div>
+          
+          <div class="section">
+            <h4>Prescriptions</h4>
+            <ul class="item-list">
+              <li>Ibuprofen 400mg - 3 times daily (Dr. Johnson, 05/07/2025)</li>
+              <li>Paracetamol 500mg - as needed for fever (Dr. Johnson, 05/07/2025)</li>
+              <li>Amoxicillin 250mg - twice daily for 10 days (Dr. Wilson, 03/15/2025)</li>
+            </ul>
+            
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Add new prescription..." style="margin-bottom: 0.5rem;">
+              <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Add Prescription</button>
+            </div>
+          </div>
+          
+          <div class="section">
+            <h4>Allergies</h4>
+            <ul class="item-list">
+              <li>Penicillin</li>
+            </ul>
+            
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Add new allergy..." style="margin-bottom: 0.5rem;">
+              <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Add Allergy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Analytics Tab -->
+      <div class="tab-pane" id="analytics">
+        <h2 class="header-title" style="margin-bottom: 1.5rem;">Analytics Dashboard</h2>
+        
+        <div class="timeframe-selector">
+          <button class="timeframe-btn active" data-timeframe="day" onclick="switchTimeframe('day')">Day</button>
+          <button class="timeframe-btn" data-timeframe="month" onclick="switchTimeframe('month')">Month</button>
+          <button class="timeframe-btn" data-timeframe="year" onclick="switchTimeframe('year')">Year</button>
+        </div>
+        
+        <div class="grid">
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-users metric-icon"></i>
+              <h3 class="metric-title">Patients Seen</h3>
+            </div>
+            <p class="metric-value" id="patients-count">12</p>
+            <p class="metric-period" id="patients-period">May 09, 2025</p>
+          </div>
+          
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-clock metric-icon"></i>
+              <h3 class="metric-title">Average Consultation Time</h3>
+            </div>
+            <p class="metric-value" id="avg-time">18 mins</p>
+            <p class="metric-period" id="time-period">May 09, 2025</p>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <h3 class="metric-title" style="margin-bottom: 1rem;">Patient Volume Over Time</h3>
+          <div class="chart-placeholder">
+            [Chart visualization would be implemented here]
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <!-- Appointment Details Modal -->
+  <div class="modal" id="appointment-details-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Appointment Details</h3>
+        <button class="modal-close" onclick="closeModal('appointment-details-modal')">&times;</button>
+      </div>
+      
+      <div class="modal-field">
+        <span class="field-label">Time</span>
+        <p class="field-value" id="details-time"></p>
+      </div>
+      
+      <div class="modal-field">
+        <span class="field-label">Patient</span>
+        <p class="field-value" id="details-patient"></p>
+      </div>
+      
+      <div class="modal-field">
+        <span class="field-label">Status</span>
+        <select id="details-status-select" class="form-control">
+          <option value="completed">Completed</option>
+          <option value="in-progress">In Progress</option>
+          <option value="upcoming">Upcoming</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      
+      <div class="modal-field">
+        <span class="field-label">Patient Message</span>
+        <p class="patient-message" id="details-message"></p>
+      </div>
+      
+      <div class="modal-footer">
+        <div></div> <!-- Empty div to maintain space-between -->
+        <button class="btn btn-primary" onclick="updateAppointmentStatus()">Save & Close</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Patient Records Modal -->
+  <div class="modal" id="patient-records-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Patient Records: <span id="records-patient-name"></span></h3>
+        <button class="modal-close" onclick="closeModal('patient-records-modal')">&times;</button>
+      </div>
+      
+      <div class="section">
+        <h4>Prescriptions</h4>
+        <ul class="item-list" id="records-prescriptions"></ul>
+        
+        <div class="input-group">
+          <input type="text" class="form-control" id="new-prescription" placeholder="Add new prescription..." style="margin-bottom: 0.5rem;">
+          <button class="btn btn-primary" onclick="addPrescription()" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Add Prescription</button>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h4>Allergies</h4>
+        <ul class="item-list" id="records-allergies"></ul>
+        
+        <div class="input-group">
+          <input type="text" class="form-control" id="new-allergy" placeholder="Add new allergy..." style="margin-bottom: 0.5rem;">
+          <button class="btn btn-primary" onclick="addAllergy()" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Add Allergy</button>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeModal('patient-records-modal')">Save & Close</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Sample data
+    const appointments = [
+      { 
+        time: '09:00 AM', 
+        patient: 'John Doe', 
+        status: 'Completed', 
+        statusClass: 'status-completed',
+        patientMessage: 'Experiencing severe headaches for the past week along with mild fever.', 
+        prescriptions: ['Ibuprofen 400mg - 3 times daily', 'Paracetamol 500mg - as needed for fever'],
+        allergies: ['Penicillin']
+      },
+      { 
+        time: '10:30 AM', 
+        patient: 'Jane Smith', 
+        status: 'In Progress', 
+        statusClass: 'status-in-progress',
+        patientMessage: 'Persistent cough and chest pain for 3 days.',
+        prescriptions: ['Amoxicillin 500mg - twice daily for 7 days', 'Codeine Cough Syrup - 10ml three times daily'],
+        allergies: ['None']
+      },
+      { 
+        time: '01:15 PM', 
+        patient: 'Robert Johnson', 
+        status: 'Upcoming', 
+        statusClass: 'status-upcoming',
+        patientMessage: 'Annual check-up and blood pressure monitoring.',
+        prescriptions: ['Lisinopril 10mg - once daily'],
+        allergies: ['Sulfa drugs', 'Shellfish']
+      },
+      { 
+        time: '03:00 PM', 
+        patient: 'Emily Wilson', 
+        status: 'Cancelled', 
+        statusClass: 'status-cancelled',
+        patientMessage: 'Skin rash and itching on arms and neck.',
+        prescriptions: [],
+        allergies: ['Latex']
+      },
+    ];
+
+    const analyticsData = {
+      patients: {
+        day: 12,
+        month: 245,
+        year: 2876
+      },
+      avgConsultation: {
+        day: '18 mins',
+        month: '22 mins',
+        year: '20 mins'
+      },
+      period: {
+        day: 'May 09, 2025',
+        month: 'May 2025',
+        year: '2025'
+      }
+    };
+
+    let currentPatientIndex = null;
+    let currentTimeframe = 'day';
+    let currentAppointmentIndex = null;
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        tab.classList.add('active');
+        
+        // Show the corresponding tab content
+        const tabId = tab.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+
+    // Update the showAppointmentDetails function
+    function showAppointmentDetails(index) {
+      const appointment = appointments[index];
+      currentAppointmentIndex = index;
+      
+      // Update modal content
+      document.getElementById('details-time').textContent = appointment.time;
+      document.getElementById('details-patient').textContent = appointment.patient;
+      
+      // Update status dropdown
+      const statusSelect = document.getElementById('details-status-select');
+      statusSelect.value = appointment.status.toLowerCase().replace(' ', '-');
+      
+      document.getElementById('details-message').textContent = appointment.patientMessage;
+      
+      // Show the modal
+      document.getElementById('appointment-details-modal').classList.add('active');
+    }
+
+    // Add the showPatientRecords function:
+    function showPatientRecords(index) {
+      const appointment = appointments[index];
+      currentPatientIndex = index;
+      
+      // Update modal content
+      document.getElementById('records-patient-name').textContent = appointment.patient;
+      
+      // Update prescriptions list
+      const prescriptionsList = document.getElementById('records-prescriptions');
+      prescriptionsList.innerHTML = '';
+      appointment.prescriptions.forEach(prescription => {
+          const li = document.createElement('li');
+          li.textContent = prescription;
+          prescriptionsList.appendChild(li);
+      });
+      
+      // Update allergies list
+      const allergiesList = document.getElementById('records-allergies');
+      allergiesList.innerHTML = '';
+      appointment.allergies.forEach(allergy => {
+          const li = document.createElement('li');
+          li.textContent = allergy;
+          allergiesList.appendChild(li);
+      });
+      
+      // Show the modal
+      document.getElementById('patient-records-modal').classList.add('active');
+    }
+
+    // Add the closeModal function if not already present:
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Add the status update function
+    function updateAppointmentStatus() {
+      const statusSelect = document.getElementById('details-status-select');
+      const newStatus = statusSelect.value;
+      
+      // Update the appointment object
+      appointments[currentAppointmentIndex].status = newStatus.charAt(0).toUpperCase() + 
+          newStatus.slice(1).replace('-', ' ');
+      appointments[currentAppointmentIndex].statusClass = 'status-' + newStatus;
+      
+      // Update the table cell
+      const statusCells = document.querySelectorAll('tbody tr');
+      const statusBadge = statusCells[currentAppointmentIndex].querySelector('.status-badge');
+      statusBadge.textContent = appointments[currentAppointmentIndex].status;
+      statusBadge.className = `status-badge status-${newStatus}`;
+      
+      // Show success message
+      const successMessage = document.createElement('div');
+      successMessage.textContent = 'Status updated successfully';
+      successMessage.className = 'alert alert-success';
+      successMessage.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          padding: 10px 20px;
+          background-color: var(--green-100);
+          color: var(--green-800);
+          border-radius: 4px;
+          z-index: 1000;
+      `;
+      document.body.appendChild(successMessage);
+      
+      // Remove success message after 3 seconds
+      setTimeout(() => {
+          successMessage.remove();
+      }, 3000);
+    }
+
+    // Add after the existing script content
+    let currentDate = new Date('2025-05-09'); // Starting date
+
+    function updateDateDisplay() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const headerTitle = document.querySelector('.header-title');
+        headerTitle.textContent = currentDate.toLocaleDateString('en-US', options) + "'s Appointments";
+    }
+
+    // Add click handlers for Previous and Next day buttons
+    document.addEventListener('DOMContentLoaded', function() {
+        const prevButton = document.querySelector('.btn-group button:first-child');
+        const nextButton = document.querySelector('.btn-group button:last-child');
+
+        prevButton.addEventListener('click', function() {
+            currentDate.setDate(currentDate.getDate() - 1);
+            updateDateDisplay();
+            // Here you would typically fetch appointments for the new date
+            updateAppointmentsForDate(currentDate);
+        });
+
+        nextButton.addEventListener('click', function() {
+            currentDate.setDate(currentDate.getDate() + 1);
+            updateDateDisplay();
+            // Here you would typically fetch appointments for the new date
+            updateAppointmentsForDate(currentDate);
+        });
+
+        // Initialize the date display
+        updateDateDisplay();
+    });
+
+    function updateAppointmentsForDate(date) {
+        const tbody = document.querySelector('tbody');
+        const today = new Date('2025-05-09').toDateString(); // Your reference "today" date
+        
+        // Show loading state
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 20px;">
+                    Loading appointments...
+                </td>
+            </tr>
+        `;
+
+        // Simulate loading delay
+        setTimeout(() => {
+            // If it's "today", show the original appointments
+            if (date.toDateString() === today) {
+                tbody.innerHTML = appointments.map((appointment, index) => `
+                    <tr>
+                        <td>
+                            <div class="time-cell">
+                                <i class="fas fa-clock"></i>
+                                <span>${appointment.time}</span>
+                            </div>
+                        </td>
+                        <td>${appointment.patient}</td>
+                        <td>
+                            <span class="status-badge ${appointment.statusClass}">${appointment.status}</span>
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <a class="action-link" onclick="showAppointmentDetails(${index})">View Details</a>
+                                <a class="action-link" onclick="showPatientRecords(${index})">Patient Records</a>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                // For other dates, show example appointments
+                const formattedDate = date.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit' 
+                });
+
+                // Generate some example appointments for other dates
+                const exampleAppointments = [
+                    {
+                        time: '10:00 AM',
+                        patient: 'Alice Brown',
+                        status: 'Upcoming',
+                        statusClass: 'status-upcoming'
+                    },
+                    {
+                        time: '02:30 PM',
+                        patient: 'Michael Chen',
+                        status: 'Upcoming',
+                        statusClass: 'status-upcoming'
+                    }
+                ];
+
+                tbody.innerHTML = exampleAppointments.map((appointment, index) => `
+                    <tr>
+                        <td>
+                            <div class="time-cell">
+                                <i class="fas fa-clock"></i>
+                                <span>${appointment.time}</span>
+                            </div>
+                        </td>
+                        <td>${appointment.patient}</td>
+                        <td>
+                            <span class="status-badge ${appointment.statusClass}">${appointment.status}</span>
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <a class="action-link" onclick="showAppointmentDetails(${index})">View Details</a>
+                                <a class="action-link" onclick="showPatientRecords(${index})">Patient Records</a>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }, 500);
+    }
+
+    // Add to your existing script section
+    function goToToday() {
+        currentDate = new Date('2025-05-09'); // Reset to today's date
+        updateDateDisplay();
+        
+        // Reset appointments to original data
+        const tbody = document.querySelector('tbody');
+        tbody.innerHTML = appointments.map((appointment, index) => `
+            <tr>
+                <td>
+                    <div class="time-cell">
+                        <i class="fas fa-clock"></i>
+                        <span>${appointment.time}</span>
+                    </div>
+                </td>
+                <td>${appointment.patient}</td>
+                <td>
+                    <span class="status-badge ${appointment.statusClass}">${appointment.status}</span>
+                </td>
+                <td>
+                    <div class="actions">
+                        <a class="action-link" onclick="showAppointmentDetails(${index})">View Details</a>
+                        <a class="action-link" onclick="showPatientRecords(${index})">Patient Records</a>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function updatePrescriptionsTab() {
+        // Find the matching patient card in the Prescriptions tab
+        const patientName = appointments[currentPatientIndex].patient;
+        const patientInitials = patientName.split(' ').map(n => n[0]).join('');
+        
+        // Create the updated patient card HTML
+        const updatedCardHTML = `
+            <div class="patient-header">
+                <div class="patient-avatar">${patientInitials}</div>
+                <div class="patient-info">
+                    <h3>${patientName}</h3>
+                    <p>DOB: 05/12/1980 (45 years)</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h4>Prescriptions</h4>
+                <ul class="item-list">
+                    ${appointments[currentPatientIndex].prescriptions.map(prescription => 
+                        `<li>${prescription}</li>`
+                    ).join('')}
+                </ul>
+                
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Add new prescription..." style="margin-bottom: 0.5rem;">
+                    <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Add Prescription</button>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h4>Allergies</h4>
+                <ul class="item-list">
+                    ${appointments[currentPatientIndex].allergies.map(allergy => 
+                        `<li>${allergy}</li>`
+                    ).join('')}
+                </ul>
+                
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Add new allergy..." style="margin-bottom: 0.5rem;">
+                    <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Add Allergy</button>
+                </div>
+            </div>
+        `;
+
+        // Update the patient card in the Prescriptions tab
+        document.querySelector('.patient-card').innerHTML = updatedCardHTML;
+    }
+
+    // Update the addPrescription and addAllergy functions:
+    function addPrescription() {
+        const newPrescription = document.getElementById('new-prescription').value.trim();
+        if (!newPrescription) return;
+
+        // Add to appointments data
+        appointments[currentPatientIndex].prescriptions.push(newPrescription);
+
+        // Update UI in modal
+        const prescriptionsList = document.getElementById('records-prescriptions');
+        const li = document.createElement('li');
+        li.textContent = newPrescription;
+        prescriptionsList.appendChild(li);
+
+        // Clear input
+        document.getElementById('new-prescription').value = '';
+
+        // Update Prescriptions tab
+        updatePrescriptionsTab();
+
+        // Show success message
+        showNotification('Prescription added successfully');
+    }
+
+    function addAllergy() {
+        const newAllergy = document.getElementById('new-allergy').value.trim();
+        if (!newAllergy) return;
+
+        // Add to appointments data
+        appointments[currentPatientIndex].allergies.push(newAllergy);
+
+        // Update UI in modal
+        const allergiesList = document.getElementById('records-allergies');
+        const li = document.createElement('li');
+        li.textContent = newAllergy;
+        allergiesList.appendChild(li);
+
+        // Clear input
+        document.getElementById('new-allergy').value = '';
+
+        // Update Prescriptions tab
+        updatePrescriptionsTab();
+
+        // Show success message
+        showNotification('Allergy added successfully');
+    }
+
+    function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.className = 'alert alert-success';
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: var(--green-100);
+            color: var(--green-800);
+            border-radius: 4px;
+            z-index: 1000;
+            transition: opacity 0.3s ease-in-out;
+        `;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 300);
+        }, 2000);
+    }
+
+    // Add this to the DOMContentLoaded event listener
+    document.addEventListener('DOMContentLoaded', function() {
+        // ...existing code...
+    
+        // Initialize Prescriptions & Allergies tab with the first patient's data
+        const firstPatient = appointments[0];
+        const patientCard = document.querySelector('.patient-card');
+        
+        if (patientCard && firstPatient) {
+            const patientInitials = firstPatient.patient.split(' ').map(n => n[0]).join('');
+            patientCard.innerHTML = `
+                <div class="patient-header">
+                    <div class="patient-avatar">${patientInitials}</div>
+                    <div class="patient-info">
+                        <h3>${firstPatient.patient}</h3>
+                        <p>DOB: 05/12/1980 (45 years)</p>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h4>Prescriptions</h4>
+                    <ul class="item-list">
+                        ${firstPatient.prescriptions.map(prescription => 
+                            `<li>${prescription}</li>`
+                        ).join('')}
+                    </ul>
+                    
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Add new prescription..." style="margin-bottom: 0.5rem;">
+                        <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Add Prescription</button>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h4>Allergies</h4>
+                    <ul class="item-list">
+                        ${firstPatient.allergies.map(allergy => 
+                            `<li>${allergy}</li>`
+                        ).join('')}
+                    </ul>
+                    
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Add new allergy..." style="margin-bottom: 0.5rem;">
+                        <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Add Allergy</button>
+                    </div>
+                </div>
+            `;
+        }
+    });
+
+    function switchTimeframe(timeframe) {
+        // Update active button state
+        document.querySelectorAll('.timeframe-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-timeframe="${timeframe}"]`).classList.add('active');
+
+        // Update metrics based on selected timeframe
+        document.getElementById('patients-count').textContent = analyticsData.patients[timeframe];
+        document.getElementById('avg-time').textContent = analyticsData.avgConsultation[timeframe];
+        
+        // Update period text
+        document.getElementById('patients-period').textContent = analyticsData.period[timeframe];
+        document.getElementById('time-period').textContent = analyticsData.period[timeframe];
+        
+        currentTimeframe = timeframe;
+    }
+
+    // Add to your existing script section
+    function signOut() {
+        // Show confirmation dialog
+        if (confirm('Are you sure you want to sign out?')) {
+            // Clear any stored user data
+            sessionStorage.clear();
+            localStorage.clear();
+            
+            // Show loading message
+            const loadingMessage = document.createElement('div');
+            loadingMessage.textContent = 'Signing out...';
+            loadingMessage.className = 'alert';
+            loadingMessage.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 10px 20px;
+                background-color: var(--blue-100);
+                color: var(--blue-800);
+                border-radius: 4px;
+                z-index: 1000;
+            `;
+            document.body.appendChild(loadingMessage);
+            
+            // Redirect to login page after brief delay
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1000);
+        }
+    }
+  </script>
+</body>
+</html>

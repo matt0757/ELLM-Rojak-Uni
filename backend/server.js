@@ -114,6 +114,25 @@ app.post('/api/login', async (req, res) => {
         });
     }
 });
+// Add email check endpoint
+app.post('/api/check-email', async (req, res) => {
+    try {
+        const { email } = req.body;
+        console.log('Checking email:', email);
+        
+        const user = await User.findOne({ email });
+        console.log('User found:', !!user);
+        
+        res.json({ exists: !!user });
+    } catch (error) {
+        console.error('Error checking email:', error);
+        res.status(500).json({ 
+            exists: false, 
+            error: 'Server error checking email' 
+        });
+    }
+});
+
 
 // Get user profile
 app.get('/api/users/:id', async (req, res) => {
@@ -132,6 +151,66 @@ app.get('/api/users/:id', async (req, res) => {
         res.status(500).json({ 
             success: false, 
             message: 'Server error while fetching user' 
+        });
+    }
+});
+
+// Add appointment endpoint
+app.post('/api/appointments', async (req, res) => {
+    try {
+        const {
+            fullname,
+            email,
+            phone,
+            date,
+            time,
+            status,
+            symptoms,
+            urgencyLevel,
+            hospital,
+            notes
+        } = req.body;
+
+        // Find user by email to add appointment to their record
+        const user = await User.findOne({ email });
+        
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found with this email'
+            });
+        }
+
+        // Create new appointment object
+        const newAppointment = {
+            fullname,
+            email,
+            phone,
+            date,
+            time,
+            status: status || 'scheduled',
+            symptoms,
+            urgencyLevel: urgencyLevel || 'routine',
+            hospital,
+            notes: notes || '',
+            clinicianId: null // Will be assigned later
+        };
+
+        // Add appointment to user's appointments array
+        user.appointments.push(newAppointment);
+        await user.save();
+
+        res.status(201).json({
+            success: true,
+            message: 'Appointment booked successfully',
+            appointment: newAppointment
+        });
+
+    } catch (error) {
+        console.error('Appointment booking error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error while booking appointment'
         });
     }
 });

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Appointment Booking</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .progress-bar {
+            margin-bottom: 30px;
+        }
+        .progress-bar .steps {
+            display: flex;
+            justify-content: space-between;
+        }
+        .progress-bar .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            font-size: 14px;
+        }
+        .progress-bar .step-number {
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+            background-color: #ddd;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-weight: bold;
+        }
+        .progress-bar .active .step-number {
+            background-color: #3498db;
+        }
+        .progress-bar .completed .step-number {
+            background-color: #2ecc71;
+        }
+        .progress-bar .bar {
+            height: 4px;
+            background-color: #ddd;
+            position: absolute;
+            top: 15px;
+            left: calc(50% + 15px);
+            right: calc(50% - 15px);
+            z-index: -1;
+        }
+        .form-step {
+            display: none;
+        }
+        .form-step.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        .btn-prev {
+            background-color: #95a5a6;
+        }
+        .btn-prev:hover {
+            background-color: #7f8c8d;
+        }
+        .btn-next {
+            background-color: #3498db;
+        }
+        .hospital-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        .hospital-option {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        .hospital-option:hover {
+            background-color: #f5f7fa;
+        }
+        .hospital-option.selected {
+            background-color: #e1f0fa;
+            border-left: 3px solid #3498db;
+        }
+        .summary-item {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        .summary-label {
+            font-weight: 600;
+            width: 150px;
+            color: #555;
+        }
+        .summary-value {
+            flex: 1;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hospital Appointment Booking</h1>
+        
+        <div class="progress-bar">
+            <div class="steps">
+                <div class="step active" id="step-1">
+                    <div class="step-number">1</div>
+                    <div>Personal Info</div>
+                </div>
+                <div class="step" id="step-2">
+                    <div class="bar"></div>
+                    <div class="step-number">2</div>
+                    <div>Date & Time</div>
+                </div>
+                <div class="step" id="step-3">
+                    <div class="bar"></div>
+                    <div class="step-number">3</div>
+                    <div>Hospital</div>
+                </div>
+                <div class="step" id="step-4">
+                    <div class="bar"></div>
+                    <div class="step-number">4</div>
+                    <div>Symptoms</div>
+                </div>
+                <div class="step" id="step-5">
+                    <div class="bar"></div>
+                    <div class="step-number">5</div>
+                    <div>Review</div>
+                </div>
+            </div>
+        </div>
+        
+        <form id="appointment-form">
+            <!-- Step 1: Personal Information -->
+            <div class="form-step active" id="form-step-1">
+                <h2>Personal Information</h2>
+                <div class="form-group">
+                    <label for="fullname">Full Name *</label>
+                    <input type="text" id="fullname" name="fullname" required>
+                    <div class="error hidden" id="fullname-error">Please enter your full name</div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="error hidden" id="email-error">Please enter a valid email address</div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                    <div class="error hidden" id="phone-error">Please enter a valid phone number</div>
+                </div>
+                <div class="btn-container">
+                    <div></div>
+                    <button type="button" class="btn-next" onclick="nextStep(1)">Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 2: Appointment Date & Time -->
+            <div class="form-step" id="form-step-2">
+                <h2>Select Appointment Date & Time</h2>
+                <div class="form-group">
+                    <label for="appointment-date">Appointment Date *</label>
+                    <input type="date" id="appointment-date" name="appointment-date" required>
+                    <div class="error hidden" id="date-error">Please select a valid date</div>
+                </div>
+                <div class="form-group">
+                    <label for="appointment-time">Appointment Start Time *</label>
+                    <input type="time" id="appointment-time" name="appointment-time" required>
+                    <div class="error hidden" id="time-error">Please select a valid time</div>
+                </div>
+                <div class="form-group">
+                    <label for="appointment-end-time">Appointment End Time (Automatically set to 2 hours after start time)</label>
+                    <input type="time" id="appointment-end-time" name="appointment-end-time" disabled>
+                </div>
+                <div class="btn-container">
+                    <button type="button" class="btn-prev" onclick="prevStep(2)">Previous</button>
+                    <button type="button" class="btn-next" onclick="nextStep(2)">Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Hospital Selection -->
+            <div class="form-step" id="form-step-3">
+                <h2>Select Hospital</h2>
+                <div class="form-group">
+                    <label for="location-input">Your Location</label>
+                    <input type="text" id="location-input" name="location" placeholder="Enter your address or postal code">
+                    <button type="button" onclick="getLocation()" style="margin-top: 10px; width: auto;">Use Current Location</button>
+                </div>
+                <div class="form-group">
+                    <label for="radius">Search Radius (km)</label>
+                    <input type="range" id="radius" name="radius" min="5" max="50" value="10" oninput="radiusValue.textContent = this.value">
+                    <span id="radiusValue">10</span> km
+                </div>
+                <div class="form-group">
+                    <label>Select Hospital *</label>
+                    <div class="hospital-list" id="hospital-list">
+                        <!-- Hospital options will be loaded here -->
+                    </div>
+                    <div class="error hidden" id="hospital-error">Please select a hospital</div>
+                </div>
+                <div class="btn-container">
+                    <button type="button" class="btn-prev" onclick="prevStep(3)">Previous</button>
+                    <button type="button" class="btn-next" onclick="nextStep(3)">Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Symptoms -->
+            <div class="form-step" id="form-step-4">
+                <h2>Your Symptoms</h2>
+                <div class="form-group">
+                    <label for="symptoms">Please describe your symptoms in detail *</label>
+                    <textarea id="symptoms" name="symptoms" rows="6" required placeholder="Please describe what symptoms you're experiencing, when they started, and any other relevant details that might help the medical staff prepare for your appointment."></textarea>
+                    <div class="error hidden" id="symptoms-error">Please describe your symptoms</div>
+                </div>
+                <div class="form-group">
+                    <label for="urgency">Urgency Level</label>
+                    <select id="urgency" name="urgency">
+                        <option value="routine">Routine (Non-urgent)</option>
+                        <option value="soon">Need to be seen soon</option>
+                        <option value="urgent">Urgent (but not emergency)</option>
+                    </select>
+                    <p><small>Note: If you are experiencing a medical emergency, please call emergency services immediately.</small></p>
+                </div>
+                <div class="btn-container">
+                    <button type="button" class="btn-prev" onclick="prevStep(4)">Previous</button>
+                    <button type="button" class="btn-next" onclick="nextStep(4)">Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 5: Review & Submit -->
+            <div class="form-step" id="form-step-5">
+                <h2>Review Your Appointment</h2>
+                <div id="appointment-summary">
+                    <div class="summary-item">
+                        <div class="summary-label">Full Name:</div>
+                        <div class="summary-value" id="summary-fullname"></div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Email:</div>
+                        <div class="summary-value" id="summary-email"></div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Phone:</div>
+                        <div class="summary-value" id="summary-phone"></div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Appointment:</div>
+                        <div class="summary-value" id="summary-datetime"></div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Hospital:</div>
+                        <div class="summary-value" id="summary-hospital"></div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Urgency:</div>
+                        <div class="summary-value" id="summary-urgency"></div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Symptoms:</div>
+                        <div class="summary-value" id="summary-symptoms"></div>
+                    </div>
+                </div>
+                <div class="btn-container">
+                    <button type="button" class="btn-prev" onclick="prevStep(5)">Previous</button>
+                    <button type="submit" id="submit-btn">Confirm Booking</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Sample hospital data - in a real application, this would come from an API
+        const hospitals = [
+            { id: 1, name: "General Hospital", address: "123 Main St", distance: 2.5 },
+            { id: 2, name: "Community Medical Center", address: "456 Oak Ave", distance: 3.8 },
+            { id: 3, name: "St. Mary's Hospital", address: "789 Elm Blvd", distance: 5.1 },
+            { id: 4, name: "University Medical Center", address: "101 College Dr", distance: 6.7 },
+            { id: 5, name: "Memorial Hospital", address: "202 Park Lane", distance: 7.9 },
+            { id: 6, name: "Mercy Medical Center", address: "303 River Rd", distance: 9.4 }
+        ];
+
+        // Current step
+        let currentStep = 1;
+        
+        // Selected hospital
+        let selectedHospital = null;
+
+        // Initialize form
+        document.addEventListener('DOMContentLoaded', function() {
+            populateHospitalList();
+            setMinDate();
+            
+            // Handle time input change
+            document.getElementById('appointment-time').addEventListener('change', updateEndTime);
+            
+            // Form submission
+            document.getElementById('appointment-form').addEventListener('submit', submitForm);
+        });
+
+        // Set minimum date to today
+        function setMinDate() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const minDate = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('appointment-date').min = minDate;
+        }
+
+        // Update end time based on start time
+        function updateEndTime() {
+            const startTimeInput = document.getElementById('appointment-time');
+            const endTimeInput = document.getElementById('appointment-end-time');
+            
+            if (startTimeInput.value) {
+                const [hours, minutes] = startTimeInput.value.split(':');
+                const startTime = new Date();
+                startTime.setHours(parseInt(hours));
+                startTime.setMinutes(parseInt(minutes));
+                
+                // Add 2 hours
+                const endTime = new Date(startTime.getTime() + (2 * 60 * 60 * 1000));
+                
+                // Format end time
+                const endHours = String(endTime.getHours()).padStart(2, '0');
+                const endMinutes = String(endTime.getMinutes()).padStart(2, '0');
+                endTimeInput.value = `${endHours}:${endMinutes}`;
+            } else {
+                endTimeInput.value = '';
+            }
+        }
+
+        // Populate hospital list
+        function populateHospitalList() {
+            const hospitalList = document.getElementById('hospital-list');
+            hospitalList.innerHTML = '';
+            
+            hospitals.forEach(hospital => {
+                const div = document.createElement('div');
+                div.className = 'hospital-option';
+                div.setAttribute('data-id', hospital.id);
+                div.innerHTML = `
+                    <strong>${hospital.name}</strong><br>
+                    ${hospital.address}<br>
+                    <small>${hospital.distance} km away</small>
+                `;
+                div.addEventListener('click', () => selectHospital(hospital.id, div));
+                hospitalList.appendChild(div);
+            });
+        }
+
+        // Select hospital
+        function selectHospital(id, element) {
+            const options = document.querySelectorAll('.hospital-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            element.classList.add('selected');
+            selectedHospital = hospitals.find(h => h.id === id);
+            
+            hideError('hospital-error');
+        }
+
+        // Get current location
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        // In a real app, we would use these coordinates to fetch nearby hospitals
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        
+                        document.getElementById('location-input').value = `Location detected (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+                        
+                        // Re-sort hospitals by distance (simulating for this demo)
+                        sortHospitalsByProximity(lat, lng);
+                    },
+                    (error) => {
+                        alert("Unable to retrieve your location. Please enter it manually.");
+                    }
+                );
+            } else {
+                alert("Geolocation is not supported by this browser. Please enter your location manually.");
+            }
+        }
+
+        // Sort hospitals by proximity (simplified simulation)
+        function sortHospitalsByProximity(lat, lng) {
+            // In a real application, this would calculate actual distances
+            // For this demo, we'll just randomize the distances a bit
+            hospitals.forEach(hospital => {
+                hospital.distance = (Math.random() * 10).toFixed(1);
+            });
+            
+            hospitals.sort((a, b) => a.distance - b.distance);
+            populateHospitalList();
+        }
+
+        // Validation functions
+        async function validatePersonalInfo() {
+            let valid = true;
+            
+            const fullname = document.getElementById('fullname');
+            const email = document.getElementById('email');
+            const phone = document.getElementById('phone');
+            
+            // Regular validations for fullname and phone
+            if (!fullname.value.trim()) {
+                showError('fullname-error');
+                valid = false;
+            } else {
+                hideError('fullname-error');
+            }
+            
+            if (!phone.value.trim()) {
+                showError('phone-error');
+                valid = false;
+            } else {
+                hideError('phone-error');
+            }
+            
+            // Email validation with database check
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email.value.trim() || !emailRegex.test(email.value)) {
+                showError('email-error');
+                document.getElementById('email-error').textContent = 'Please enter a valid email address';
+                valid = false;
+            } else {
+                // Only check database if email format is valid
+                const emailExists = await checkEmailExists(email.value);
+                if (!emailExists) {
+                    showError('email-error');
+                    document.getElementById('email-error').textContent = 'Email not found. Please register first.';
+                    valid = false;
+                } else {
+                    hideError('email-error');
+                }
+            }
+            
+            return valid;
+        }
+
+        function validateDateTime() {
+            let valid = true;
+            
+            const date = document.getElementById('appointment-date');
+            const time = document.getElementById('appointment-time');
+            
+            if (!date.value) {
+                showError('date-error');
+                valid = false;
+            } else {
+                hideError('date-error');
+            }
+            
+            if (!time.value) {
+                showError('time-error');
+                valid = false;
+            } else {
+                hideError('time-error');
+            }
+            
+            return valid;
+        }
+
+        function validateHospital() {
+            if (!selectedHospital) {
+                showError('hospital-error');
+                return false;
+            } else {
+                hideError('hospital-error');
+                return true;
+            }
+        }
+
+        function validateSymptoms() {
+            const symptoms = document.getElementById('symptoms');
+            
+            if (!symptoms.value.trim()) {
+                showError('symptoms-error');
+                return false;
+            } else {
+                hideError('symptoms-error');
+                return true;
+            }
+        }
+
+        function showError(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function hideError(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // Navigation functions
+        async function nextStep(currentStepNum) {
+            let isValid = true;
+
+            // Validate based on current step
+            if (currentStepNum === 1) {
+                isValid = await validatePersonalInfo();
+            } else if (currentStepNum === 2) {
+                isValid = validateDateTime();
+            } else if (currentStepNum === 3) {
+                isValid = validateHospital();
+            } else if (currentStepNum === 4) {
+                isValid = validateSymptoms();
+            }
+
+            if (!isValid) return;
+            
+            if (currentStepNum === 4) {
+                updateSummary();
+            }
+            
+            // Proceed to next step
+            document.getElementById(`form-step-${currentStepNum}`).classList.remove('active');
+            document.getElementById(`form-step-${currentStepNum + 1}`).classList.add('active');
+            
+            document.getElementById(`step-${currentStepNum}`).classList.add('completed');
+            document.getElementById(`step-${currentStepNum + 1}`).classList.add('active');
+            
+            currentStep = currentStepNum + 1;
+            window.scrollTo(0, 0);
+        }
+
+        function prevStep(currentStepNum) {
+            document.getElementById(`form-step-${currentStepNum}`).classList.remove('active');
+            document.getElementById(`form-step-${currentStepNum - 1}`).classList.add('active');
+            
+            document.getElementById(`step-${currentStepNum}`).classList.remove('active');
+            document.getElementById(`step-${currentStepNum - 1}`).classList.add('active');
+            
+            currentStep = currentStepNum - 1;
+            window.scrollTo(0, 0);
+        }
+
+        // Update summary before final submission
+        function updateSummary() {
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const date = document.getElementById('appointment-date').value;
+            const startTime = document.getElementById('appointment-time').value;
+            const endTime = document.getElementById('appointment-end-time').value;
+            const symptoms = document.getElementById('symptoms').value;
+            const urgency = document.getElementById('urgency');
+            const urgencyText = urgency.options[urgency.selectedIndex].text;
+            
+            // Format date
+            const formattedDate = new Date(date).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            document.getElementById('summary-fullname').textContent = fullname;
+            document.getElementById('summary-email').textContent = email;
+            document.getElementById('summary-phone').textContent = phone;
+            document.getElementById('summary-datetime').textContent = `${formattedDate}, ${startTime} - ${endTime}`;
+            document.getElementById('summary-hospital').textContent = selectedHospital ? 
+                `${selectedHospital.name} (${selectedHospital.address})` : 'No hospital selected';
+            document.getElementById('summary-symptoms').textContent = symptoms;
+            document.getElementById('summary-urgency').textContent = urgencyText;
+        }
+
+        // Form submission
+        async function submitForm(e) {
+            e.preventDefault();
+            
+            try {
+                // Prepare appointment data
+                const appointmentData = {
+                    fullname: document.getElementById('fullname').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    date: document.getElementById('appointment-date').value,
+                    time: document.getElementById('appointment-time').value,
+                    status: 'scheduled',
+                    symptoms: document.getElementById('symptoms').value,
+                    urgencyLevel: document.getElementById('urgency').value,
+                    hospital: selectedHospital.name,
+                    notes: ''
+                };
+
+                // Send to backend
+                const response = await fetch('http://localhost:5000/api/appointments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(appointmentData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show success message
+                    document.getElementById('appointment-form').innerHTML = `
+                        <div style="text-align: center; padding: 40px 20px;">
+                            <h2 style="color: #2ecc71;">Appointment Request Submitted Successfully!</h2>
+                            <p>Thank you for submitting your appointment request. We will match you with an available clinician shortly.</p>
+                            <p>A confirmation email will be sent to ${appointmentData.email} once a clinician is assigned.</p>
+                            <p>Your appointment details:</p>
+                            <p><strong>Date & Time:</strong> ${new Date(appointmentData.date).toLocaleDateString('en-US', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}, ${appointmentData.time}</p>
+                            <p><strong>Hospital:</strong> ${appointmentData.hospital}</p>
+                            <p><strong>Status:</strong> Pending clinician assignment</p>
+                            <button type="button" onclick="window.location.href='mainpage.html'" style="margin-top: 20px;">Return to Dashboard</button>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(data.message || 'Failed to book appointment');
+                }
+            } catch (error) {
+                console.error('Error submitting appointment:', error);
+                alert('Failed to book appointment. Please try again.');
+            }
+        }
+
+        async function checkEmailExists(email) {
+            try {
+                const response = await fetch('http://localhost:5000/api/check-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Email check response:', data);
+                return data.exists;
+
+            } catch (error) {
+                console.error('Email verification error:', error);
+                // Show error in the form
+                const emailError = document.getElementById('email-error');
+                emailError.textContent = 'Unable to verify email. Please try again.';
+                emailError.classList.remove('hidden');
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>

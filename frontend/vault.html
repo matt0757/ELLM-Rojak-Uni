@@ -8,12 +8,31 @@
     body {
       font-family: Arial, sans-serif;
       background-color: #f5f5f5;
-      padding: 40px;
+      padding: 20px;
+      margin: 0;
+    }
+    
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .brand-logo h1 {
+      margin: 0;
+      color: #333;
+      font-size: 28px;
+    }
+    
+    .brand-logo .logo-icon {
+      font-size: 30px;
+      margin-right: 10px;
     }
 
     .container {
       background-color: white;
-      max-width: 500px;
+      max-width: 1200px;
       margin: auto;
       padding: 30px;
       border-radius: 10px;
@@ -22,34 +41,80 @@
 
     h1 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
       color: #333;
+    }
+
+    h2 {
+      font-size: 18px;
+      color: #444;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .form-layout {
+      display: flex;
+      flex-wrap: wrap;
+      margin-left: -15px;
+      margin-right: -15px;
+    }
+
+    .col {
+      flex: 1;
+      padding: 0 15px;
+      min-width: 300px;
+    }
+    
+    .personal-info-col {
+      flex: 1.2; /* Give the left column slightly more width */
+    }
+    
+    .documents-col {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      height: 100%;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      margin-top: 15px;
+      margin-bottom: 8px;
       font-weight: bold;
+      color: #444;
     }
 
     input, textarea {
       width: 100%;
-      padding: 10px;
-      margin-top: 8px;
+      padding: 12px;
       border-radius: 5px;
       border: 1px solid #ccc;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #8ee0a1;
+      box-shadow: 0 0 0 2px rgba(142, 224, 161, 0.2);
     }
 
     button {
-      margin-top: 20px;
       background-color: #8ee0a1;
       color: white;
       border: none;
-      padding: 12px;
+      padding: 14px;
       width: 100%;
       border-radius: 5px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 16px;
+      transition: background-color 0.2s;
     }
 
     button:hover {
@@ -58,32 +123,479 @@
 
     .success {
       margin-top: 15px;
-      color: green;
+      padding: 12px;
+      background-color: #e7f7ee;
+      color: #2a884f;
       text-align: center;
+      border-radius: 5px;
+      display: none;
     }
 
     .error {
       margin-top: 15px;
-      color: red;
+      padding: 12px;
+      background-color: #ffecec;
+      color: #d63030;
       text-align: center;
+      border-radius: 5px;
+      display: none;
+    }
+
+    /* File upload styles */
+    .file-upload {
+      margin-top: 10px;
+      position: relative;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .file-upload-button {
+      display: block;
+      padding: 12px;
+      background-color: #f8f8f8;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: normal;
+      color: #555;
+    }
+
+    .file-upload-button:hover {
+      background-color: #f0f0f0;
+      border-color: #ccc;
+    }
+
+    .file-upload input[type="file"] {
+      position: absolute;
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .file-list {
+      margin-top: 8px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .file-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      background-color: #f8f8f8;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
+    .file-preview {
+      display: flex;
+      align-items: center;
+      max-width: 85%;
+    }
+
+    .file-icon {
+      margin-right: 8px;
+      color: #666;
+    }
+    
+    .file-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .remove-file {
+      color: #f44336;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 18px;
+      margin-left: 8px;
+    }
+
+    .document-section {
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #eee;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+      height: calc(50% - 10px); /* Make each section take up half the column height minus margin */
+      min-height: 200px; /* Ensure minimum height */
+      display: flex;
+      flex-direction: column;
+    }
+
+    .document-section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .document-icon {
+      font-size: 20px;
+      margin-right: 10px;
+      color: #666;
+    }
+
+    .document-title {
+      font-weight: bold;
+      margin: 0;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .document-description {
+      margin: 5px 0 10px 0;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .progress-container {
+      margin-top: 15px;
+      display: none;
+    }
+    
+    .progress-bar {
+      height: 6px;
+      background-color: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .progress-bar-fill {
+      height: 100%;
+      background-color: #8ee0a1;
+      width: 0%;
+      transition: width 0.3s;
+    }
+    
+    .progress-text {
+      margin-top: 5px;
+      font-size: 14px;
+      color: #555;
+      text-align: center;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(142, 224, 161, 0.3);
+      border-radius: 50%;
+      border-top-color: #8ee0a1;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    .file-upload-button {
+      display: block;
+      padding: 12px;
+      border: 1px dashed #ccc;
+      border-radius: 5px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: normal;
+      color: #555;
+      background-color: #fdfdfd;
+    }
+
+    .file-upload-button:hover {
+      background-color: #f0f9f2;
+      border-color: #8ee0a1;
+    }
+
+    .submit-container {
+      clear: both;
+      padding-top: 20px;
+    }
+    
+    /* Footer with brand */
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .footer-brand {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .submit-button {
+      background-color: #8ee0a1;
+      color: white;
+      border: none;
+      padding: 14px;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      transition: background-color 0.2s;
+    }
+
+    .submit-button:hover {
+      background-color: #7bd391;
+    }
+
+    /* Insurance card section styling */
+    .insurance-section {
+      background-color: #f0f7ff;
+      border-color: #d0e0ff;
+    }
+    
+    .insurance-section .file-upload-button {
+      background-color: #f8fbff;
+    }
+    
+    .insurance-section .file-upload-button:hover {
+      background-color: #e0edff;
+      border-color: #a0c0ff;
+    }
+
+    /* Medical records section styling */
+    .records-section {
+      background-color: #f0fff4;
+      border-color: #d0ffd0;
+    }
+    
+    .records-section .file-upload-button {
+      background-color: #f8fff8;
+    }
+    
+    .records-section .file-upload-button:hover {
+      background-color: #e0ffe0;
+      border-color: #a0ffa0;
+    }
+
+    /* Medication list section styling */
+    .medication-section {
+      background-color: #fff8f8;
+      border-color: #ffd0d0;
+    }
+    
+    .medication-section .file-upload-button {
+      background-color: #fffafa;
+    }
+    
+    .medication-section .file-upload-button:hover {
+      background-color: #ffe0e0;
+      border-color: #ffa0a0;
+    }
+
+    /* Other docs section styling */
+    .other-section {
+      background-color: #fffbf0;
+      border-color: #fff0d0;
+    }
+    
+    .other-section .file-upload-button {
+      background-color: #fffdf8;
+    }
+    
+    .other-section .file-upload-button:hover {
+      background-color: #fff8e0;
+      border-color: #ffe0a0;
+    }
+    .logo-icon {
+      height: 40px;      /* Adjust as needed */
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    h1 {
+       display: inline-block;
+       vertical-align: middle;
+       font-size: 24px;
+    }
+
+    /* Insurance card icon styling */
+    .insurance-icon {
+      color: #4a90e2;
+    }
+
+    /* Medical records icon styling */
+    .records-icon {
+      color: #50b27e;
+    }
+
+    /* Medication list icon styling */
+    .medication-icon {
+      color: #e94f64;
+    }
+
+    /* Other docs icon styling */
+    .other-icon {
+      color: #f5a623;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 992px) {
+      .col, .personal-info-col, .documents-col {
+        flex: 0 0 100%;
+        margin-bottom: 20px;
+      }
+      
+      .document-section {
+        height: auto;
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 20px;
+      }
+      
+      input, textarea, button {
+        padding: 10px;
+      }
+      
+      .document-section {
+        padding: 12px;
+      }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
+  <div class="brand-logo">
+    <img src="mainpage img/Mr Vault.png" alt="Mr. Vault Logo" class="logo-icon" />
+    <h1>Mr. Vault</h1>
+  </div>
   <div class="container">
-    <h1>Submit Medical Note</h1>
+    <h1 style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande'; font-size: 40px; color: lightskyblue">Submit Medical Documents</h1>
     <form id="vaultForm">
-      <label for="fullName">Full Name</label>
-      <input type="text" id="fullName" required>
+      <div class="form-layout">
+        <!-- Left Column - Personal Info -->
+        <div class="col personal-info-col">
+          <h2>Personal Information</h2>
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" placeholder="John Doe" required>
+          </div>
 
-      <label for="medicalNote">Medical Note</label>
-      <textarea id="medicalNote" rows="5" required></textarea>
+          <div class="form-group">
+            <label for="medicalNote">Medical Note</label>
+            <textarea id="medicalNote" rows="15" placeholder="Details that you wish to notify..." required></textarea>
+          </div>
+          
+        </div>
+        
+        <!-- Middle Column - Insurance & Medical Records -->
+        <div class="col documents-col">
+          <!-- Insurance Card Section -->
+          <div class="document-section insurance-section">
+            <div class="document-section-header">
+              <span class="document-icon insurance-icon">💳</span>
+              <h3 class="document-title">Insurance Card</h3>
+            </div>
+            <p class="document-description">Upload front and back of your insurance card</p>
+            
+            <div class="file-upload">
+              <label for="insuranceCardUpload" class="file-upload-button" id="insuranceCardButton">
+                <span id="insuranceCardText">Click or drag to attach insurance card</span>
+              </label>
+              <input type="file" id="insuranceCardUpload" multiple accept=".pdf,.jpg,.jpeg,.png">
+              <ul id="insuranceCardList" class="file-list"></ul>
+            </div>
+          </div>
+          
+          <!-- Past Medical Records Section -->
+          <div class="document-section records-section">
+            <div class="document-section-header">
+              <span class="document-icon records-icon">📋</span>
+              <h3 class="document-title">Past Medical Records</h3>
+            </div>
+            <p class="document-description">Upload any relevant medical history documents</p>
+            
+            <div class="file-upload">
+              <label for="medicalRecordsUpload" class="file-upload-button" id="medicalRecordsButton">
+                <span id="medicalRecordsText">Click or drag to attach medical records</span>
+              </label>
+              <input type="file" id="medicalRecordsUpload" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+              <ul id="medicalRecordsList" class="file-list"></ul>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Column - Medication & Other Docs -->
+        <div class="col documents-col">
+          <!-- Medication List Section -->
+          <div class="document-section medication-section">
+            <div class="document-section-header">
+              <span class="document-icon medication-icon">💊</span>
+              <h3 class="document-title">Medication List</h3>
+            </div>
+            <p class="document-description">Upload your current medication list</p>
+            
+            <div class="file-upload">
+              <label for="medicationListUpload" class="file-upload-button" id="medicationListButton">
+                <span id="medicationListText">Click or drag to attach medication list</span>
+              </label>
+              <input type="file" id="medicationListUpload" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+              <ul id="medicationListList" class="file-list"></ul>
+            </div>
+          </div>
+          
+          <!-- Other Documents Section -->
+          <div class="document-section other-section">
+            <div class="document-section-header">
+              <span class="document-icon other-icon">📁</span>
+              <h3 class="document-title">Other Medical Documents</h3>
+            </div>
+            <p class="document-description">Upload any additional relevant documents</p>
+            
+            <div class="file-upload">
+              <label for="otherDocsUpload" class="file-upload-button" id="otherDocsButton">
+                <span id="otherDocsText">Click or drag to attach other documents</span>
+              </label>
+              <input type="file" id="otherDocsUpload" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+              <ul id="otherDocsList" class="file-list"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <button type="submit">Submit</button>
+      <div class="progress-container" id="progressContainer">
+        <div class="progress-bar">
+          <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Uploading files... 0%</div>
+      </div>
 
-      <div class="success" id="successMsg" style="display:none;">Data saved successfully!</div>
-      <div class="error" id="errorMsg" style="display:none;">Error saving data. Try again.</div>
+      <div class="submit-container">
+        <button type="submit" class="submit-button">Submit Documents</button>
+        
+        <div class="success" id="successMsg">
+          <span>✓</span> Documents saved successfully!
+        </div>
+        <div class="error" id="errorMsg">
+          <span>✕</span> Error saving documents. Please try again.
+        </div>
+      </div>
     </form>
+    
+    <div class="footer">
+      Securely stored with <span class="footer-brand">CareMore</span> - Your trusted medical partner
+    </div>
   </div>
 
   <!-- Firebase SDK -->
@@ -91,13 +603,14 @@
     // Import Firebase functions
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
   
     // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyBPeaDGjtbvmrhCY_7YEaTxDN3NBHgRS14",
       authDomain: "medical-records-5026f.firebaseapp.com",
       projectId: "medical-records-5026f",
-      storageBucket: "medical-records-5026f.firebasestorage.app",
+      storageBucket: "medical-records-5026f.appspot.com",
       messagingSenderId: "1084582559517",
       appId: "1:1084582559517:web:c40d74ba2149e52b40abf4",
       measurementId: "G-ZC2K1ZW7SF"
@@ -106,33 +619,308 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const storage = getStorage(app);
   
-    // Form submission
+    // Document type config
+    const documentTypes = [
+      {
+        id: 'insuranceCard',
+        title: 'Insurance Card',
+        icon: '💳',
+        folderPath: 'insurance_cards'
+      },
+      {
+        id: 'medicalRecords',
+        title: 'Medical Records',
+        icon: '📋',
+        folderPath: 'medical_records'
+      },
+      {
+        id: 'medicationList',
+        title: 'Medication List',
+        icon: '💊',
+        folderPath: 'medication_lists'
+      },
+      {
+        id: 'otherDocs',
+        title: 'Other Documents',
+        icon: '📁',
+        folderPath: 'other_documents'
+      }
+    ];
+    
+    // Initialize file storage for each document type
+    const fileStorage = {};
+    documentTypes.forEach(type => {
+      fileStorage[type.id] = {
+        files: [],
+        urls: [],
+        names: []
+      };
+    });
+    
+    // Set up file upload handling for each document type
+    documentTypes.forEach(type => {
+      setupFileUpload(type);
+    });
+    
+    function setupFileUpload(docType) {
+      const fileUpload = document.getElementById(`${docType.id}Upload`);
+      const fileList = document.getElementById(`${docType.id}List`);
+      const uploadText = document.getElementById(`${docType.id}Text`);
+      const uploadButton = document.getElementById(`${docType.id}Button`);
+      
+      // File input change event
+      fileUpload.addEventListener('change', (e) => {
+        const newFiles = Array.from(e.target.files);
+        
+        if (newFiles.length > 0) {
+          // Add new files to the storage
+          fileStorage[docType.id].files = [...fileStorage[docType.id].files, ...newFiles];
+          updateFileList(docType.id);
+        }
+        
+        // Clear the input to allow selecting the same file again
+        fileUpload.value = '';
+      });
+      
+      // Drag and drop functionality for the button itself
+      uploadButton.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadButton.style.backgroundColor = '#f0f9f2';
+        uploadButton.style.borderColor = '#8ee0a1';
+      });
+      
+      uploadButton.addEventListener('dragleave', () => {
+        uploadButton.style.backgroundColor = '';
+        uploadButton.style.borderColor = '';
+      });
+      
+      uploadButton.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadButton.style.backgroundColor = '';
+        uploadButton.style.borderColor = '';
+        
+        if (e.dataTransfer.files.length > 0) {
+          const newFiles = Array.from(e.dataTransfer.files);
+          fileStorage[docType.id].files = [...fileStorage[docType.id].files, ...newFiles];
+          updateFileList(docType.id);
+        }
+      });
+    }
+    
+    // Update the file list for a specific document type
+    function updateFileList(docTypeId) {
+      const fileList = document.getElementById(`${docTypeId}List`);
+      const uploadText = document.getElementById(`${docTypeId}Text`);
+      const files = fileStorage[docTypeId].files;
+      
+      // Update upload button text
+      uploadText.textContent = files.length > 0 
+        ? `${files.length} file(s) selected, click or drag to add more` 
+        : `Click or drag to attach ${getDocTypeTitle(docTypeId).toLowerCase()}`;
+      
+      // Clear and rebuild file list
+      fileList.innerHTML = '';
+      
+      files.forEach((file, index) => {
+        const fileItem = document.createElement('li');
+        fileItem.className = 'file-item';
+        
+        const filePreview = document.createElement('div');
+        filePreview.className = 'file-preview';
+        
+        const fileIcon = document.createElement('span');
+        fileIcon.className = 'file-icon';
+        fileIcon.textContent = getFileIcon(file.name);
+        
+        const fileName = document.createElement('span');
+        fileName.className = 'file-name';
+        fileName.textContent = file.name;
+        
+        filePreview.appendChild(fileIcon);
+        filePreview.appendChild(fileName);
+        
+        const removeButton = document.createElement('span');
+        removeButton.className = 'remove-file';
+        removeButton.textContent = '×';
+        removeButton.addEventListener('click', () => {
+          fileStorage[docTypeId].files.splice(index, 1);
+          updateFileList(docTypeId);
+        });
+        
+        fileItem.appendChild(filePreview);
+        fileItem.appendChild(removeButton);
+        fileList.appendChild(fileItem);
+      });
+    }
+    
+    function getDocTypeTitle(docTypeId) {
+      const docType = documentTypes.find(type => type.id === docTypeId);
+      return docType ? docType.title : 'Documents';
+    }
+    
+    function getFileIcon(fileName) {
+      const extension = fileName.split('.').pop().toLowerCase();
+      
+      const icons = {
+        'pdf': '📄',
+        'doc': '📝',
+        'docx': '📝',
+        'jpg': '🖼️',
+        'jpeg': '🖼️',
+        'png': '🖼️'
+      };
+      
+      return icons[extension] || '📎';
+    }
+  
+    // Form elements
     const form = document.getElementById('vaultForm');
     const successMsg = document.getElementById('successMsg');
     const errorMsg = document.getElementById('errorMsg');
-  
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressText = document.getElementById('progressText');
+    
+    // Form submission
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      // Hide previous messages
       successMsg.style.display = "none";
       errorMsg.style.display = "none";
-  
-      const fullName = document.getElementById('fullName').value;
-      const medicalNote = document.getElementById('medicalNote').value;
-  
+      
+      // Get form data
+      const fullName = document.getElementById('fullName').value.trim();
+      const medicalNote = document.getElementById('medicalNote').value.trim();
+      
+      // Basic validation
+      if (!fullName) {
+        showError("Please enter your full name");
+        document.getElementById('fullName').focus();
+        return;
+      }
+      
+      if (!medicalNote) {
+        showError("Please enter a medical note");
+        document.getElementById('medicalNote').focus();
+        return;
+      }
+      
+      // Count total files for progress tracking
+      let totalFiles = 0;
+      let uploadedFiles = 0;
+      documentTypes.forEach(type => {
+        totalFiles += fileStorage[type.id].files.length;
+      });
+      
+      // Show progress if there are files
+      if (totalFiles > 0) {
+        progressContainer.style.display = "block";
+        progressBarFill.style.width = "0%";
+        progressText.textContent = "Uploading files... 0%";
+      }
+      
       try {
-        await addDoc(collection(db, "medicalNotes"), {
+        // Upload files for each document type
+        for (const docType of documentTypes) {
+          const files = fileStorage[docType.id].files;
+          
+          if (files.length > 0) {
+            for (const file of files) {
+              // Create a unique path for this file
+              const filePath = `${docType.folderPath}/${Date.now()}_${file.name}`;
+              const fileRef = ref(storage, filePath);
+              
+              // Create upload task to track progress
+              const uploadTask = uploadBytesResumable(fileRef, file);
+              
+              // Set up progress monitoring
+              uploadTask.on('state_changed', 
+                (snapshot) => {
+                  const fileProgress = snapshot.bytesTransferred / snapshot.totalBytes;
+                  const overallProgress = (uploadedFiles + fileProgress) / totalFiles * 100;
+                  progressBarFill.style.width = overallProgress + "%";
+                  progressText.textContent = `Uploading files... ${Math.round(overallProgress)}%`;
+                },
+                (error) => {
+                  console.error("Upload error:", error);
+                  showError("Error uploading files. Please try again.");
+                }
+              );
+              
+              // Wait for upload to complete
+              await uploadTask;
+              uploadedFiles++;
+              
+              // Get the download URL
+              const downloadURL = await getDownloadURL(fileRef);
+              fileStorage[docType.id].urls.push(downloadURL);
+              fileStorage[docType.id].names.push(file.name);
+            }
+          }
+        }
+        
+        // Prepare document data
+        const documentData = {
           fullName,
           medicalNote,
-          timestamp: serverTimestamp()
+          timestamp: serverTimestamp(),
+          documents: {}
+        };
+        
+        // Add document data for each type
+        documentTypes.forEach(type => {
+          if (fileStorage[type.id].files.length > 0) {
+            documentData.documents[type.id] = {
+              files: fileStorage[type.id].urls,
+              fileNames: fileStorage[type.id].names
+            };
+          }
         });
-        successMsg.style.display = "block";
+        
+        // Add document to Firestore
+        await addDoc(collection(db, "medicalDocuments"), documentData);
+        
+        // Hide progress and show success
+        progressContainer.style.display = "none";
+        showSuccess();
+        
+        // Reset form
         form.reset();
+        resetFileStorage();
+        
       } catch (err) {
         console.error("Error adding document:", err);
-        errorMsg.style.display = "block";
+        progressContainer.style.display = "none";
+        showError("Error saving data. Please try again.");
       }
     });
+    
+    function resetFileStorage() {
+      // Reset file storage for each document type
+      documentTypes.forEach(type => {
+        fileStorage[type.id] = {
+          files: [],
+          urls: [],
+          names: []
+        };
+        updateFileList(type.id);
+      });
+    }
+    
+    function showSuccess() {
+      successMsg.style.display = "block";
+      setTimeout(() => {
+        successMsg.style.display = "none";
+      }, 5000);
+    }
+    
+    function showError(message) {
+      errorMsg.textContent = message || "Error saving data. Please try again.";
+      errorMsg.style.display = "block";
+    }
   </script>
   
 </body>
