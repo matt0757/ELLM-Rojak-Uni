@@ -703,23 +703,5 @@
             </div>
         </div>
     </footer>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is logged in
-            const currentUser = sessionStorage.getItem('currentUser');
-            const token = sessionStorage.getItem('token');
-            
-            if (!currentUser || !token) {
-                window.location.href = 'login.html';
-                return;
-            }
-
-            // Add click handler for booking appointment button
-            document.querySelector('.book-appointment-btn').addEventListener('click', function() {
-                // Session data will automatically carry over since we're using sessionStorage
-                window.location.href = 'Ms.Carey.html';
-            });
-        });
-    </script>
 </body>
 </html>
