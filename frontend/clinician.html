@@ -910,6 +910,20 @@ const appointments = [
   },
   {
     id: '7',
+    time: '11:00 AM - 1:00 PM',
+    date: '2025-05-14',
+    patient: 'Choon Yi Keith',
+    email: 'yikeithchoon@gmail.com',
+    status: 'Upcoming',
+    statusClass: 'status-upcoming',
+    patientMessage: 'Patient has been feeling dizzy and experiencing a headache',
+    symptoms: 'Dizziness and headache',
+    urgency: 'routine',
+    prescriptions: [],
+    allergies: []
+  },
+  {
+    id: '8',
     time: '2:00 PM - 4:00 PM',
     date: '2025-05-14',
     patient: 'Marcus Lee',
@@ -923,7 +937,7 @@ const appointments = [
     allergies: ['Latex']
   },
   {
-    id: '8',
+    id: '9',
     time: '7:00 AM - 9:00 AM',
     date: '2025-05-15',
     patient: 'Aishah Rahman',
@@ -937,7 +951,7 @@ const appointments = [
     allergies: []
   },
   {
-    id: '9',
+    id: '10',
     time: '10:00 AM - 12:00 PM',
     date: '2025-05-15',
     patient: 'Nurul Aisyah',
@@ -951,7 +965,7 @@ const appointments = [
     allergies: []
   },
   {
-    id: '10',
+    id: '11',
     time: '1:00 PM - 3:00 PM',
     date: '2025-05-15',
     patient: 'John Lim',
@@ -965,7 +979,7 @@ const appointments = [
     allergies: ['Shellfish']
   },
   {
-    id: '11',
+    id: '12',
     time: '11:00 AM - 1:00 PM',
     date: '2025-05-16',
     patient: 'Mack Yong',
@@ -1112,7 +1126,7 @@ function updateAppointmentStatus() {
 }
 
 // Set up the current date
-let currentDate = new Date(2025, 4, 12); // May 12, 2025 (JavaScript months are 0-indexed)
+let currentDate = new Date(); 
 
 // Update date display
 function updateDateDisplay() {
