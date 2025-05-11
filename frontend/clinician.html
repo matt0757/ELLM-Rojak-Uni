@@ -58,9 +58,20 @@
     }
     
     .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: var(--gray-900);
+        flex: 1; /* Logo takes available space */
+        font-size: 28px;
+        font-weight: bold;
+        color: #2d3721;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      object-fit: cover;
     }
     
     .user-profile {
@@ -576,7 +587,10 @@
   <!-- Header -->
   <header>
     <div class="header-container">
-      <div class="logo">CareMore</div>
+      <div class="logo">
+          <img src = "logo img/Blue and White Circle Surfing Club Logo.jpg" alt = "CareMore Icon" class = "logo-icon">
+          CareMore</span>
+      </div>
       <div class="user-profile">
         <span><!-- Name will be inserted by JavaScript --></span>
         <div class="avatar"><!-- Initials will be inserted by JavaScript --></div>
@@ -808,683 +822,570 @@
   </div>
   
   <script>
-    // Sample data
-    const appointments = [
-      { 
-        time: '09:00 AM', 
-        patient: 'John Doe', 
-        status: 'Completed', 
-        statusClass: 'status-completed',
-        patientMessage: 'Experiencing severe headaches for the past week along with mild fever.', 
-        prescriptions: ['Ibuprofen 400mg - 3 times daily', 'Paracetamol 500mg - as needed for fever'],
-        allergies: ['Penicillin']
-      }
-    ];
+// Sample data with your fake patient information
+const appointments = [
+  { 
+    id: '1',
+    time: '7:00 AM - 9:00 AM', 
+    date: '2025-05-12',
+    patient: 'Markues Ng',
+    email: 'markues@example.com', 
+    status: 'Upcoming', 
+    statusClass: 'status-upcoming',
+    patientMessage: 'Patient suffering from ankle pain for more than a week', 
+    symptoms: 'Ankle pain',
+    urgency: 'soon',
+    prescriptions: ['Ibuprofen 600mg - 3 times daily'],
+    allergies: ['None reported']
+  },
+  {
+    id: '2',
+    time: '10:00 AM - 12:00 PM',
+    date: '2025-05-12',
+    patient: 'John Smith',
+    email: 'patient1@example.com',
+    status: 'Upcoming',
+    statusClass: 'status-upcoming',
+    patientMessage: 'Patient has been experiencing symptoms for the past week',
+    symptoms: 'Severe headaches and dizziness',
+    urgency: 'urgent',
+    prescriptions: ['Paracetamol 500mg - as needed for pain'],
+    allergies: ['Penicillin']
+  },
+  {
+    id: '3',
+    time: '3:00 PM - 5:00 PM',
+    date: '2025-05-12',
+    patient: 'Arvind Kumar',
+    email: 'arvind.k@example.com',
+    status: 'Upcoming',
+    statusClass: 'status-upcoming',
+    patientMessage: 'Patient has had a fever over 39°C for the past 48 hours, along with chills and body aches',
+    symptoms: 'High fever and chills',
+    urgency: 'urgent',
+    prescriptions: [],
+    allergies: ['Aspirin']
+  },
+  {
+    id: '4',
+    time: '9:00 AM - 11:00 AM',
+    date: '2025-05-13',
+    patient: 'Siti Zulaikha',
+    email: 'patient6@example.com',
+    status: 'Upcoming',
+    statusClass: 'status-upcoming',
+    patientMessage: 'Patient is requesting a routine check-up appointment',
+    symptoms: 'Routine check-up',
+    urgency: 'routine',
+    prescriptions: ['Multivitamin - once daily'],
+    allergies: ['Sulfa drugs']
+  },
+  {
+    id: '5',
+    time: '12:00 PM - 2:00 PM',
+    date: '2025-05-13',
+    patient: 'Chen Wei',
+    email: 'patient5@example.com',
+    status: 'Upcoming',
+    statusClass: 'status-upcoming',
+    patientMessage: 'Patient has had a persistent cough for two weeks.',
+    symptoms: 'Persistent cough',
+    urgency: 'soon',
+    prescriptions: [],
+    allergies: []
+  },
+  {
+    id: '6',
+    time: '8:00 AM - 10:00 AM',
+    date: '2025-05-14',
+    patient: 'Lily Wong',
+    email: 'patient8@example.com',
+    status: 'Upcoming',
+    statusClass: 'status-upcoming',
+    patientMessage: 'Patient is experiencing recurring migraines',
+    symptoms: 'Recurring migraines',
+    urgency: 'routine',
+    prescriptions: ['Sumatriptan 50mg - as needed for migraines'],
+    allergies: []
+  },
+  {
+    id: '7',
+    time: '2:00 PM - 4:00 PM',
+    date: '2025-05-14',
+    patient: 'Marcus Lee',
+    email: 'patient3@example.com',
+    status: 'Upcoming',
+    statusClass: 'status-upcoming',
+    patientMessage: 'Patient has been feeling fatigued and short of breath recently',
+    symptoms: 'Fatigued and short of breath',
+    urgency: 'soon',
+    prescriptions: [],
+    allergies: ['Latex']
+  },
+  {
+    id: '8',
+    time: '7:00 AM - 9:00 AM',
+    date: '2025-05-15',
+    patient: 'Aishah Rahman',
+    email: 'aishahrahman@example.com',
+    status: 'Upcoming',
+    statusClass: 'status-upcoming',
+    patientMessage: 'Patient reports coughing for over 10 days, especially at night. No fever or shortness of breath.',
+    symptoms: 'Persistent cough',
+    urgency: 'soon',
+    prescriptions: ['Dextromethorphan syrup - 10ml every 6 hours'],
+    allergies: []
+  },
+  {
+    id: '9',
+    time: '10:00 AM - 12:00 PM',
+    date: '2025-05-15',
+    patient: 'Nurul Aisyah',
+    email: 'patient4@example.com',
+    status: 'Upcoming',
+    statusClass: 'status-upcoming',
+    patientMessage: 'Patient is experiencing lower back pain and wishes to schedule a check-up.',
+    symptoms: 'Lower back pain',
+    urgency: 'routine',
+    prescriptions: ['Diclofenac gel - apply to affected area twice daily'],
+    allergies: []
+  },
+  {
+    id: '10',
+    time: '1:00 PM - 3:00 PM',
+    date: '2025-05-15',
+    patient: 'John Lim',
+    email: 'john@example.com',
+    status: 'Upcoming',
+    statusClass: 'status-upcoming',
+    patientMessage: 'Patient requests a refill for hypertension medication. No new symptoms or changes in dosage needed',
+    symptoms: 'Medication refill',
+    urgency: 'routine',
+    prescriptions: ['Lisinopril 10mg - once daily', 'Hydrochlorothiazide 12.5mg - once daily'],
+    allergies: ['Shellfish']
+  },
+  {
+    id: '11',
+    time: '11:00 AM - 1:00 PM',
+    date: '2025-05-16',
+    patient: 'Mack Yong',
+    email: 'mackyong@example.com',
+    status: 'Upcoming',
+    statusClass: 'status-upcoming',
+    patientMessage: 'Patient has been facing mild cough and flu for 3 days',
+    symptoms: 'Mild cough and flu',
+    urgency: 'routine',
+    prescriptions: [],
+    allergies: []
+  }
+];
 
-    const analyticsData = {
-      patients: {
-        day: 12,
-        month: 245,
-        year: 2876
-      },
-      avgConsultation: {
-        day: '18 mins',
-        month: '22 mins',
-        year: '20 mins'
-      },
-      period: {
-        day: 'May 09, 2025',
-        month: 'May 2025',
-        year: '2025'
-      }
-    };
+const analyticsData = {
+  patients: {
+    day: 3,  // Number of patients for May 12 (default current day)
+    month: 25,
+    year: 245
+  },
+  avgConsultation: {
+    day: '25 mins',
+    month: '22 mins',
+    year: '20 mins'
+  },
+  period: {
+    day: 'May 12, 2025',
+    month: 'May 2025',
+    year: '2025'
+  }
+};
 
-    let currentPatientIndex = null;
-    let currentTimeframe = 'day';
-    let currentAppointmentIndex = null;
+let currentPatientIndex = null;
+let currentTimeframe = 'day';
+let currentAppointmentIndex = null;
 
-    // Tab switching
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        // Remove active class from all tabs
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-        
-        // Add active class to clicked tab
-        tab.classList.add('active');
-        
-        // Show the corresponding tab content
-        const tabId = tab.getAttribute('data-tab');
-        document.getElementById(tabId).classList.add('active');
-      });
-    });
-
-    // Update the showAppointmentDetails function
-    function showAppointmentDetails(index) {
-      const appointment = appointments[index];
-      currentAppointmentIndex = index;
-      
-      // Update modal content
-      document.getElementById('details-time').textContent = appointment.time;
-      document.getElementById('details-patient').textContent = appointment.patient;
-      
-      // Update status dropdown
-      const statusSelect = document.getElementById('details-status-select');
-      statusSelect.value = appointment.status.toLowerCase().replace(' ', '-');
-      
-      document.getElementById('details-message').textContent = appointment.patientMessage;
-      
-      // Show the modal
-      document.getElementById('appointment-details-modal').classList.add('active');
-    }
-
-    // Add the showPatientRecords function:
-    function showPatientRecords(index) {
-      const appointment = appointments[index];
-      currentPatientIndex = index;
-      
-      // Update modal content
-      document.getElementById('records-patient-name').textContent = appointment.patient;
-      
-      // Update prescriptions list
-      const prescriptionsList = document.getElementById('records-prescriptions');
-      prescriptionsList.innerHTML = '';
-      appointment.prescriptions.forEach(prescription => {
-          const li = document.createElement('li');
-          li.textContent = prescription;
-          prescriptionsList.appendChild(li);
-      });
-      
-      // Update allergies list
-      const allergiesList = document.getElementById('records-allergies');
-      allergiesList.innerHTML = '';
-      appointment.allergies.forEach(allergy => {
-          const li = document.createElement('li');
-          li.textContent = allergy;
-          allergiesList.appendChild(li);
-      });
-      
-      // Show the modal
-      document.getElementById('patient-records-modal').classList.add('active');
-    }
-
-    // Add the closeModal function if not already present:
-    function closeModal(modalId) {
-      document.getElementById(modalId).classList.remove('active');
-    }
-
-    // Add the status update function
-    function updateAppointmentStatus() {
-      const statusSelect = document.getElementById('details-status-select');
-      const newStatus = statusSelect.value;
-      
-      // Update the appointment object
-      appointments[currentAppointmentIndex].status = newStatus.charAt(0).toUpperCase() + 
-          newStatus.slice(1).replace('-', ' ');
-      appointments[currentAppointmentIndex].statusClass = 'status-' + newStatus;
-      
-      // Update the table cell
-      const statusCells = document.querySelectorAll('tbody tr');
-      const statusBadge = statusCells[currentAppointmentIndex].querySelector('.status-badge');
-      statusBadge.textContent = appointments[currentAppointmentIndex].status;
-      statusBadge.className = `status-badge status-${newStatus}`;
-      
-      // Show success message
-      const successMessage = document.createElement('div');
-      successMessage.textContent = 'Status updated successfully';
-      successMessage.className = 'alert alert-success';
-      successMessage.style.cssText = `
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          padding: 10px 20px;
-          background-color: var(--green-100);
-          color: var(--green-800);
-          border-radius: 4px;
-          z-index: 1000;
-      `;
-      document.body.appendChild(successMessage);
-      
-      // Remove success message after 3 seconds
-      setTimeout(() => {
-          successMessage.remove();
-      }, 3000);
-    }
-
-    // Add after the existing script content
-    let currentDate = new Date(); // Use today's date
-
-    function updateDateDisplay() {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const headerTitle = document.querySelector('.header-title');
-        headerTitle.textContent = currentDate.toLocaleDateString('en-US', options) + "'s Appointments";
-    }
-
-    // Add click handlers for Previous and Next day buttons
-    document.addEventListener('DOMContentLoaded', function() {
-        const prevButton = document.querySelector('.btn-group button:first-child');
-        const nextButton = document.querySelector('.btn-group button:last-child');
-
-        prevButton.addEventListener('click', function() {
-            currentDate.setDate(currentDate.getDate() - 1);
-            updateDateDisplay();
-            // Here you would typically fetch appointments for the new date
-            updateAppointmentsForDate(currentDate);
-        });
-
-        nextButton.addEventListener('click', function() {
-            currentDate.setDate(currentDate.getDate() + 1);
-            updateDateDisplay();
-            // Here you would typically fetch appointments for the new date
-            updateAppointmentsForDate(currentDate);
-        });
-
-        // Initialize the date display
-        updateDateDisplay();
-    });
-
-    function updateAppointmentsForDate(date) {
-        fetchAndDisplayAppointments(date);
-    }
-
-    // Add to your existing script section
-    function goToToday() {
-        currentDate = new Date(); // Reset to today's date
-        updateDateDisplayAndAppointments();
-
-    }
-
-    function updatePrescriptionsTab() {
-        // Find the matching patient card in the Prescriptions tab
-        const patientName = appointments[currentPatientIndex].patient;
-        const patientInitials = patientName.split(' ').map(n => n[0]).join('');
-        
-        // Create the updated patient card HTML
-        const updatedCardHTML = `
-            <div class="patient-header">
-                <div class="patient-avatar">${patientInitials}</div>
-                <div class="patient-info">
-                    <h3>${patientName}</h3>
-                    <p>DOB: 05/12/1980 (45 years)</p>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h4>Prescriptions</h4>
-                <ul class="item-list">
-                    ${appointments[currentPatientIndex].prescriptions.map(prescription => 
-                        `<li>${prescription}</li>`
-                    ).join('')}
-                </ul>
-                
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Add new prescription..." style="margin-bottom: 0.5rem;">
-                    <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Add Prescription</button>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h4>Allergies</h4>
-                <ul class="item-list">
-                    ${appointments[currentPatientIndex].allergies.map(allergy => 
-                        `<li>${allergy}</li>`
-                    ).join('')}
-                </ul>
-                
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Add new allergy..." style="margin-bottom: 0.5rem;">
-                    <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Add Allergy</button>
-                </div>
-            </div>
-        `;
-
-        // Update the patient card in the Prescriptions tab
-        document.querySelector('.patient-card').innerHTML = updatedCardHTML;
-    }
-
-    // Update the addPrescription and addAllergy functions:
-    function addPrescription() {
-        const newPrescription = document.getElementById('new-prescription').value.trim();
-        if (!newPrescription) return;
-
-        // Add to appointments data
-        appointments[currentPatientIndex].prescriptions.push(newPrescription);
-
-        // Update UI in modal
-        const prescriptionsList = document.getElementById('records-prescriptions');
-        const li = document.createElement('li');
-        li.textContent = newPrescription;
-        prescriptionsList.appendChild(li);
-
-        // Clear input
-        document.getElementById('new-prescription').value = '';
-
-        // Update Prescriptions tab
-        updatePrescriptionsTab();
-
-        // Show success message
-        showNotification('Prescription added successfully');
-    }
-
-    function addAllergy() {
-        const newAllergy = document.getElementById('new-allergy').value.trim();
-        if (!newAllergy) return;
-
-        // Add to appointments data
-        appointments[currentPatientIndex].allergies.push(newAllergy);
-
-        // Update UI in modal
-        const allergiesList = document.getElementById('records-allergies');
-        const li = document.createElement('li');
-        li.textContent = newAllergy;
-        allergiesList.appendChild(li);
-
-        // Clear input
-        document.getElementById('new-allergy').value = '';
-
-        // Update Prescriptions tab
-        updatePrescriptionsTab();
-
-        // Show success message
-        showNotification('Allergy added successfully');
-    }
-
-    function showNotification(message) {
-        const notification = document.createElement('div');
-        notification.textContent = message;
-        notification.className = 'alert alert-success';
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            background-color: var(--green-100);
-            color: var(--green-800);
-            border-radius: 4px;
-            z-index: 1000;
-            transition: opacity 0.3s ease-in-out;
-        `;
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            setTimeout(() => notification.remove(), 300);
-        }, 2000);
-    }
-
-    // Add this to the DOMContentLoaded event listener
-    document.addEventListener('DOMContentLoaded', function() {
-        // ...existing code...
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    // Remove active class from all tabs
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
     
-        // Initialize Prescriptions & Allergies tab with the first patient's data
-        const firstPatient = appointments[0];
-        const patientCard = document.querySelector('.patient-card');
-        
-        if (patientCard && firstPatient) {
-            const patientInitials = firstPatient.patient.split(' ').map(n => n[0]).join('');
-            patientCard.innerHTML = `
-                <div class="patient-header">
-                    <div class="patient-avatar">${patientInitials}</div>
-                    <div class="patient-info">
-                        <h3>${firstPatient.patient}</h3>
-                        <p>DOB: 05/12/1980 (45 years)</p>
-                    </div>
-                </div>
-                
-                <div class="section">
-                    <h4>Prescriptions</h4>
-                    <ul class="item-list">
-                        ${firstPatient.prescriptions.map(prescription => 
-                            `<li>${prescription}</li>`
-                        ).join('')}
-                    </ul>
-                    
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Add new prescription..." style="margin-bottom: 0.5rem;">
-                        <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Add Prescription</button>
-                    </div>
-                </div>
-                
-                <div class="section">
-                    <h4>Allergies</h4>
-                    <ul class="item-list">
-                        ${firstPatient.allergies.map(allergy => 
-                            `<li>${allergy}</li>`
-                        ).join('')}
-                    </ul>
-                    
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Add new allergy..." style="margin-bottom: 0.5rem;">
-                        <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Add Allergy</button>
-                    </div>
-                </div>
-            `;
+    // Add active class to clicked tab
+    tab.classList.add('active');
+    
+    // Show the corresponding tab content
+    const tabId = tab.getAttribute('data-tab');
+    document.getElementById(tabId).classList.add('active');
+  });
+});
+
+// Find appointment index by ID
+function findAppointmentIndex(id) {
+  return appointments.findIndex(appointment => appointment.id === id);
+}
+
+// Find appointment index by email
+function findAppointmentByEmail(email) {
+  return appointments.findIndex(appointment => appointment.email === email);
+}
+
+// Show appointment details
+function showAppointmentDetails(id) {
+  const index = findAppointmentIndex(id);
+  if (index === -1) return;
+  
+  const appointment = appointments[index];
+  currentAppointmentIndex = index;
+  
+  // Update modal content
+  document.getElementById('details-time').textContent = appointment.time;
+  document.getElementById('details-patient').textContent = appointment.patient;
+  
+  // Update status dropdown
+  const statusSelect = document.getElementById('details-status-select');
+  statusSelect.value = appointment.status.toLowerCase().replaceAll(' ', '-');
+  
+  document.getElementById('details-message').textContent = appointment.patientMessage;
+  
+  // Show the modal
+  document.getElementById('appointment-details-modal').classList.add('active');
+}
+
+// Show patient records
+function showPatientRecords(email) {
+  const index = findAppointmentByEmail(email);
+  if (index === -1) return;
+  
+  const appointment = appointments[index];
+  currentPatientIndex = index;
+  
+  // Update modal content
+  document.getElementById('records-patient-name').textContent = appointment.patient;
+  
+  // Update prescriptions list
+  const prescriptionsList = document.getElementById('records-prescriptions');
+  prescriptionsList.innerHTML = '';
+  appointment.prescriptions.forEach(prescription => {
+    const li = document.createElement('li');
+    li.textContent = prescription;
+    prescriptionsList.appendChild(li);
+  });
+  
+  // Update allergies list
+  const allergiesList = document.getElementById('records-allergies');
+  allergiesList.innerHTML = '';
+  appointment.allergies.forEach(allergy => {
+    const li = document.createElement('li');
+    li.textContent = allergy;
+    allergiesList.appendChild(li);
+  });
+  
+  // Show the modal
+  document.getElementById('patient-records-modal').classList.add('active');
+}
+
+// Close modal
+function closeModal(modalId) {
+  document.getElementById(modalId).classList.remove('active');
+}
+
+// Update appointment status
+function updateAppointmentStatus() {
+  const statusSelect = document.getElementById('details-status-select');
+  const newStatus = statusSelect.value;
+  
+  // Update the appointment object
+  appointments[currentAppointmentIndex].status = newStatus.charAt(0).toUpperCase() + 
+      newStatus.slice(1).replace(/-/g, ' ');
+  appointments[currentAppointmentIndex].statusClass = 'status-' + newStatus;
+  
+  // Update the table cell
+  const statusCells = document.querySelectorAll('tbody tr');
+  const statusBadge = statusCells[currentAppointmentIndex].querySelector('.status-badge');
+  statusBadge.textContent = appointments[currentAppointmentIndex].status;
+  statusBadge.className = `status-badge status-${newStatus}`;
+  
+  // Show success message
+  showNotification('Status updated successfully');
+  
+  // Close the modal
+  closeModal('appointment-details-modal');
+}
+
+// Set up the current date
+let currentDate = new Date(2025, 4, 12); // May 12, 2025 (JavaScript months are 0-indexed)
+
+// Update date display
+function updateDateDisplay() {
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const headerTitle = document.querySelector('.header-title');
+  headerTitle.textContent = currentDate.toLocaleDateString('en-US', options) + "'s Appointments";
+}
+
+// Filter appointments for current date
+function getAppointmentsForDate(date) {
+  const dateString = date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+  return appointments.filter(appointment => appointment.date === dateString);
+}
+
+// Update appointments table
+function updateAppointmentsForDate(date) {
+  const dailyAppointments = getAppointmentsForDate(date);
+  const tbody = document.querySelector('tbody');
+  
+  if (dailyAppointments.length > 0) {
+    tbody.innerHTML = dailyAppointments.map((appointment, index) => `
+      <tr>
+        <td>
+          <div class="time-cell">
+            <i class="fas fa-clock"></i>
+            <span>${appointment.time}</span>
+          </div>
+        </td>
+        <td>${appointment.patient}</td>
+        <td>
+          <span class="status-badge ${appointment.statusClass}">
+            ${appointment.status}
+          </span>
+        </td>
+        <td>
+          <div class="actions">
+            <a class="action-link" onclick="showAppointmentDetails('${appointment.id}')">View Details</a>
+            <a class="action-link" onclick="showPatientRecords('${appointment.email}')">Patient Records</a>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  } else {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align: center; padding: 20px;">
+          No appointments found for this date
+        </td>
+      </tr>
+    `;
+  }
+}
+
+// Go to today
+function goToToday() {
+  currentDate = new Date(); 
+  updateDateDisplayAndAppointments();
+}
+
+// Update prescriptions tab
+function updatePrescriptionsTab() {
+  // Find the matching patient in the appointments array
+  const patient = appointments[currentPatientIndex];
+  if (!patient) return;
+  
+  const patientName = patient.patient;
+  const patientInitials = patientName.split(' ').map(n => n[0]).join('');
+  
+  // Create the updated patient card HTML
+  const updatedCardHTML = `
+    <div class="patient-header">
+      <div class="patient-avatar">${patientInitials}</div>
+      <div class="patient-info">
+        <h3>${patientName}</h3>
+        <p>Email: ${patient.email}</p>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h4>Prescriptions</h4>
+      <ul class="item-list">
+        ${patient.prescriptions.length > 0 ? 
+          patient.prescriptions.map(prescription => 
+            `<li>${prescription}</li>`
+          ).join('') :
+          '<li>No prescriptions on record</li>'
         }
-    });
-
-    function switchTimeframe(timeframe) {
-        // Update active button state
-        document.querySelectorAll('.timeframe-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        document.querySelector(`[data-timeframe="${timeframe}"]`).classList.add('active');
-
-        // Update metrics based on selected timeframe
-        document.getElementById('patients-count').textContent = analyticsData.patients[timeframe];
-        document.getElementById('avg-time').textContent = analyticsData.avgConsultation[timeframe];
-        
-        // Update period text
-        document.getElementById('patients-period').textContent = analyticsData.period[timeframe];
-        document.getElementById('time-period').textContent = analyticsData.period[timeframe];
-        
-        currentTimeframe = timeframe;
-    }
-
-    // Add to your existing script section
-    function signOut() {
-        // Show confirmation dialog
-        if (confirm('Are you sure you want to sign out?')) {
-            // Clear any stored user data
-            sessionStorage.clear();
-            localStorage.clear();
-            
-            // Show loading message
-            const loadingMessage = document.createElement('div');
-            loadingMessage.textContent = 'Signing out...';
-            loadingMessage.className = 'alert';
-            loadingMessage.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 10px 20px;
-                background-color: var(--blue-100);
-                color: var (--blue-800);
-                border-radius: 4px;
-                z-index: 1000;
-            `;
-            document.body.appendChild(loadingMessage);
-            
-            // Redirect to login page after brief delay
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 1000);
+      </ul>
+      
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Add new prescription..." style="margin-bottom: 0.5rem;">
+        <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;" onclick="addNewPrescription()">Add Prescription</button>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h4>Allergies</h4>
+      <ul class="item-list">
+        ${patient.allergies.length > 0 ? 
+          patient.allergies.map(allergy => 
+            `<li>${allergy}</li>`
+          ).join('') :
+          '<li>No allergies on record</li>'
         }
-    }
+      </ul>
+      
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Add new allergy..." style="margin-bottom: 0.5rem;">
+        <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;" onclick="addNewAllergy()">Add Allergy</button>
+      </div>
+    </div>
+  `;
 
-    // At the top of your script section, remove duplicate declarations and combine the session handling:
-    document.addEventListener('DOMContentLoaded', async function() {
-        // Check if user is logged in as clinician
-        const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
-        const token = sessionStorage.getItem('token');
+  // Update the patient card in the Prescriptions tab
+  document.querySelector('.patient-card').innerHTML = updatedCardHTML;
+}
 
-        if (!currentUser || !token || currentUser.type !== 'clinician') {
-            alert('Please log in as a clinician to access this page');
-            window.location.href = 'login.html';
-            return;
-        }
+// Add prescription
+function addPrescription() {
+  const newPrescription = document.getElementById('new-prescription').value.trim();
+  if (!newPrescription) return;
 
-        // Update UI with clinician's name and title
-        const userProfileSpan = document.querySelector('.user-profile span');
-        userProfileSpan.textContent = `Dr. ${currentUser.name}`;
-        
-        // Update avatar with initials
-        const avatar = document.querySelector('.avatar');
-        avatar.textContent = getInitials(currentUser.name);
+  // Add to appointments data
+  appointments[currentPatientIndex].prescriptions.push(newPrescription);
 
-        // Fetch appointments for this clinician
-        try {
-            const response = await fetch(`http://localhost:5000/api/appointments`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    clinicianId: currentUser._id
-                })
-            });
-            
-            if (!response.ok) throw new Error('Failed to fetch appointments');
-            
-            const data = await response.json();
-            if (data.appointments) {
-                updateAppointmentsTable(data.appointments);
-            } else {
-                throw new Error('No appointments data received');
-            }
-        } catch (error) {
-            console.error('Error fetching appointments:', error);
-            document.querySelector('tbody').innerHTML = `
-                <tr>
-                    <td colspan="4" style="text-align: center; padding: 20px;">
-                        No appointments found
-                    </td>
-                </tr>
-            `;
-        }
+  // Update UI in modal
+  const prescriptionsList = document.getElementById('records-prescriptions');
+  const li = document.createElement('li');
+  li.textContent = newPrescription;
+  prescriptionsList.appendChild(li);
 
-        // Fetch analytics data for this clinician
-        fetchAnalyticsData(currentUser._id, currentTimeframe);
-    });
+  // Clear input
+  document.getElementById('new-prescription').value = '';
 
-    function updateAppointmentsTable(appointments) {
-        const tbody = document.querySelector('tbody');
-        
-        if (appointments && appointments.length > 0) {
-            tbody.innerHTML = appointments.map(appointment => {
-                return `
-                    <tr>
-                        <td>
-                            <div class="time-cell">
-                                <i class="fas fa-clock"></i>
-                                <span>${appointment.time}</span>
-                            </div>
-                        </td>
-                        <td>${appointment.fullname}</td>
-                        <td>
-                            <span class="status-badge status-${appointment.status.toLowerCase()}">
-                                ${appointment.status}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="actions">
-                                <a class="action-link" onclick="showAppointmentDetails('${appointment._id}')">
-                                    View Details
-                                </a>
-                                <a class="action-link" onclick="showPatientRecords('${appointment.email}')">
-                                    Patient Records
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        } else {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="4" style="text-align: center; padding: 20px;">
-                        No appointments found
-                    </td>
-                </tr>
-            `;
-        }
-    }
+  // Update Prescriptions tab
+  updatePrescriptionsTab();
 
-    // Helper to format date as YYYY-MM-DD for API
-    function formatDateForAPI(date) {
-        return date.toISOString().split('T')[0];
-    }
+  // Show success message
+  showNotification('Prescription added successfully');
+}
 
-    // Fetch and display appointments for a given date
-    async function fetchAndDisplayAppointments(date) {
-        const tbody = document.querySelector('tbody');
-        const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
-        const token = sessionStorage.getItem('token');
-        if (!currentUser || !token) return;
+// Add allergy
+function addAllergy() {
+  const newAllergy = document.getElementById('new-allergy').value.trim();
+  if (!newAllergy) return;
 
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="4" style="text-align: center; padding: 20px;">
-                    Loading appointments...
-                </td>
-            </tr>
-        `;
+  // Add to appointments data
+  appointments[currentPatientIndex].allergies.push(newAllergy);
 
-        try {
-            const response = await fetch('http://localhost:5000/api/appointments/by-date', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    clinicianId: currentUser._id,
-                    date: formatDateForAPI(date)
-                })
-            });
-            if (!response.ok) throw new Error('Failed to fetch appointments');
-            const data = await response.json();
-            if (data.appointments && data.appointments.length > 0) {
-                tbody.innerHTML = data.appointments.map((appointment, index) => `
-                    <tr>
-                        <td>
-                            <div class="time-cell">
-                                <i class="fas fa-clock"></i>
-                                <span>${appointment.time}</span>
-                            </div>
-                        </td>
-                        <td>${appointment.fullname || appointment.patient}</td>
-                        <td>
-                            <span class="status-badge status-${appointment.status ? appointment.status.toLowerCase() : ''}">
-                                ${appointment.status || ''}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="actions">
-                                <a class="action-link" onclick="showAppointmentDetails('${appointment._id}')">View Details</a>
-                                <a class="action-link" onclick="showPatientRecords('${appointment.patientId || appointment.email || ''}')">Patient Records</a>
-                            </div>
-                        </td>
-                    </tr>
-                `).join('');
-            } else {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="4" style="text-align: center; padding: 20px;">
-                            No appointments found
-                        </td>
-                    </tr>
-                `;
-            }
-        } catch (error) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="4" style="text-align: center; padding: 20px;">
-                        Error loading appointments
-                    </td>
-                </tr>
-            `;
-        }
-    }
+  // Update UI in modal
+  const allergiesList = document.getElementById('records-allergies');
+  const li = document.createElement('li');
+  li.textContent = newAllergy;
+  allergiesList.appendChild(li);
 
-    // Update date display and fetch appointments
-    function updateDateDisplayAndAppointments() {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const headerTitle = document.querySelector('.header-title');
-        headerTitle.textContent = currentDate.toLocaleDateString('en-US', options) + "'s Appointments";
-        fetchAndDisplayAppointments(currentDate);
-    }
+  // Clear input
+  document.getElementById('new-allergy').value = '';
 
-    // Fetch patient records by patientId or email
-    async function fetchPatientRecords(patientIdOrEmail) {
-        const token = sessionStorage.getItem('token');
-        try {
-            const response = await fetch('http://localhost:5000/api/patient-records', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ patientIdOrEmail })
-            });
-            if (!response.ok) throw new Error('Failed to fetch patient records');
-            const data = await response.json();
-            updatePatientCard(data.patient);
-        } catch (error) {
-            document.querySelector('.patient-card').innerHTML = `
-                <div style="padding: 20px; text-align: center; color: var(--red-800);">
-                    Error loading patient records
-                </div>
-            `;
-        }
-    }
+  // Update Prescriptions tab
+  updatePrescriptionsTab();
 
-    // Update the patient card UI
-    function updatePatientCard(patient) {
-        if (!patient) {
-            document.querySelector('.patient-card').innerHTML = `
-                <div style="padding: 20px; text-align: center;">
-                    No patient data found
-                </div>
-            `;
-            return;
-        }
-        const initials = (patient.name || patient.fullname || '').split(' ').map(n => n[0]).join('');
-        document.querySelector('.patient-card').innerHTML = `
-            <div class="patient-header">
-                <div class="patient-avatar">${initials}</div>
-                <div class="patient-info">
-                    <h3>${patient.name || patient.fullname}</h3>
-                    <p>DOB: ${patient.dob || 'N/A'}</p>
-                </div>
-            </div>
-            <div class="section">
-                <h4>Prescriptions</h4>
-                <ul class="item-list">
-                    ${(patient.medicalHistory?.medications || []).map(med => `<li>${med}</li>`).join('')}
-                </ul>
-            </div>
-            <div class="section">
-                <h4>Allergies</h4>
-                <ul class="item-list">
-                    ${(patient.medicalHistory?.allergies || []).map(allergy => `<li>${allergy}</li>`).join('')}
-                </ul>
-            </div>
-        `;
-    }
+  // Show success message
+  showNotification('Allergy added successfully');
+}
 
-    // Example usage: fetchPatientRecords(patientIdOrEmail);
+// Show notification
+function showNotification(message) {
+  const notification = document.createElement('div');
+  notification.textContent = message;
+  notification.className = 'alert alert-success';
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: var(--green-100);
+    color: var(--green-800);
+    border-radius: 4px;
+    z-index: 1000;
+    transition: opacity 0.3s ease-in-out;
+  `;
+  document.body.appendChild(notification);
 
-    async function fetchAnalyticsData(clinicianId, timeframe) {
-        const token = sessionStorage.getItem('token');
-        try {
-            const response = await fetch('http://localhost:5000/api/analytics', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ clinicianId, timeframe })
-            });
-            if (!response.ok) throw new Error('Failed to fetch analytics');
-            const data = await response.json();
-            updateAnalyticsTab(data.analytics);
-        } catch (error) {
-            document.getElementById('patients-count').textContent = 'N/A';
-            document.getElementById('avg-time').textContent = 'N/A';
-            document.getElementById('patients-period').textContent = '';
-            document.getElementById('time-period').textContent = '';
-        }
-    }
+  setTimeout(() => {
+    notification.style.opacity = '0';
+    setTimeout(() => notification.remove(), 300);
+  }, 2000);
+}
 
-    function updateAnalyticsTab(analytics) {
-        document.getElementById('patients-count').textContent = analytics.patients;
-        document.getElementById('avg-time').textContent = analytics.avgConsultation;
-        document.getElementById('patients-period').textContent = analytics.period;
-        document.getElementById('time-period').textContent = analytics.period;
-    }
+// Switch timeframe for analytics
+function switchTimeframe(timeframe) {
+  // Update active button state
+  document.querySelectorAll('.timeframe-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.querySelector(`[data-timeframe="${timeframe}"]`).classList.add('active');
 
-    // Example usage: fetchAnalyticsData(currentUser._id, currentTimeframe);
+  // Update metrics based on selected timeframe
+  document.getElementById('patients-count').textContent = analyticsData.patients[timeframe];
+  document.getElementById('avg-time').textContent = analyticsData.avgConsultation[timeframe];
+  
+  // Update period text
+  document.getElementById('patients-period').textContent = analyticsData.period[timeframe];
+  document.getElementById('time-period').textContent = analyticsData.period[timeframe];
+  
+  currentTimeframe = timeframe;
+}
+
+// Sign out
+function signOut() {
+  // Show confirmation dialog
+  if (confirm('Are you sure you want to sign out?')) {
+    // Show loading message
+    showNotification('Signing out...');
+    
+    // Redirect to login page after brief delay
+    setTimeout(() => {
+      alert('You have been signed out.');
+      // In a real application, this would redirect to login page
+      window.location.href = 'login.html';
+    }, 1000);
+  }
+}
+
+// Helper function for getting user initials
+function getInitials(name) {
+  return name.split(' ').map(n => n[0]).join('');
+}
+
+// Update date display and appointments
+function updateDateDisplayAndAppointments() {
+  updateDateDisplay();
+  updateAppointmentsForDate(currentDate);
+}
+
+// Document ready event
+document.addEventListener('DOMContentLoaded', function() {
+  // Set up clinician profile
+  const userProfileSpan = document.querySelector('.user-profile span');
+  userProfileSpan.textContent = 'Dr. Medical Office';
+  
+  // Update avatar with initials
+  const avatar = document.querySelector('.avatar');
+  avatar.textContent = 'SW';
+
+  // Add click handlers for Previous and Next day buttons
+  const prevButton = document.querySelector('.btn-group button:first-child');
+  const nextButton = document.querySelector('.btn-group button:last-child');
+
+  prevButton.addEventListener('click', function() {
+    const newDate = new Date(currentDate);
+    newDate.setDate(newDate.getDate() - 1);
+    currentDate = newDate;
+    updateDateDisplayAndAppointments();
+  });
+
+  nextButton.addEventListener('click', function() {
+    const newDate = new Date(currentDate);
+    newDate.setDate(newDate.getDate() + 1);
+    currentDate = newDate;
+    updateDateDisplayAndAppointments();
+  });
+
+  // Initialize the date display and appointments
+  updateDateDisplayAndAppointments();
+  
+  // Initialize Prescriptions & Allergies tab with the first patient's data
+  currentPatientIndex = 0; // Default to first patient
+  updatePrescriptionsTab();
+  
+  // Initialize analytics data
+  switchTimeframe('day');
+});
   </script>
 </body>
 </html>

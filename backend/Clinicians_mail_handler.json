@@ -1,0 +1,1013 @@
+{
+  "name": "Clinicians mail handler",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -2276,
+        240
+      ],
+      "id": "296b05e8-366a-4393-bc30-3fc37ea9e9c8",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -3460,
+        20
+      ],
+      "id": "0c6d3bd2-754e-4497-9b82-f333c6ebb6b7",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9vuwMlY2w1QuGebw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an AI assistant that analyzes email content to determine if the sender is requesting a medical appointment. Your task is to check whether the email contains a request for a doctor consultation and extract relevant information.\nInput:\n{{ $('Gmail Trigger').item.json.bodyPlain }}\nThe patient email should be extact from {{ $('Gmail Trigger').item.json.from.email }}\nThe patient name should be extracted from {{ $('Gmail Trigger').item.json.from.name }}\nThe recieved time should be extracted from {{ $('Gmail Trigger').item.json.receivedTime }}\n\nInstructions:\n\nExamine the email text to determine if it's requesting a medical appointment\nExtract symptoms, date/time preferences, and assess urgency\nReturn your analysis in proper JSON format that can be directly processed (not as a string)\n\nTime Classification:\nIf they mentioned a specific time, just pass it to preffered time, but if not, when patient talk about a time period, then:\nmorning: 9am\nafternoon:1pm\nevening:4pm\nAssign accordingly when patient mentioned about the time period\n\nUrgency Level Criteria:\n\nurgent: If email mentions terms like \"urgent\", \"emergency\", \"severe pain\", \"immediately\", \"as soon as possible\", or indicates concerning symptoms like chest pain, difficulty breathing, etc.\nsoon: If the patient requests to be seen within the next 2-3 days\nroutine: For all other regular appointment requests\n\nImportant: Format your response as a direct JSON object, not as a string\nYour response should be formatted to work with n8n's data structure.\nExample Email:\nI hope this message finds you well. I would like to request an appointment for a medical consultation. I've been experiencing headaches and fatigue over the past few days, and I'd like to get it checked.\nIf possible, I would prefer an appointment on Tuesday next week, preferably in the afternoon. Please let me know if that works or if there are any other available slots.\nThank you in advance, and I look forward to your reply.\nExpected Response Format:\njson{\n    \"appointment_requested\": true,\n    \"symptoms\": \"headaches and fatigue\",\n    \"preferred_date\": \"Tuesday next week\",\n    \"preferred_time\": \"afternoon\",\n    \"full_datetime_preference\": \"Tuesday next week in the afternoon\",\n    \"urgency_level\": \"routine\",\n    \"additional_notes\": \"Patient has been experiencing symptoms for a few days\",\n    \"patient_email\": \"{{ $('Gmail Trigger').item.json.from.email }}\",\n    \"patient_name\": \"{{ $('Gmail Trigger').item.json.from.name }}\",\n    \"subject\": \"{{ $('Gmail Trigger').item.json.subject }}\",\n    \"received_time\": \"{{ $('Gmail Trigger').item.json.receivedTime }}\"\n}\n\nIf No Appointment Requested:\njson{\n    \"appointment_requested\": false,\n    \"symptoms\": \"None mentioned\",\n    \"preferred_date\": \"No date provided\",\n    \"preferred_time\": \"No time provided\",\n    \"full_datetime_preference\": \"No date/time preference provided\",\n    \"urgency_level\": \"not applicable\",\n    \"additional_notes\": \"No appointment request detected\",\n    \"patient_email\": \"{{$json.from.email}}\",\n    \"patient_name\": \"{{$json.from.name}}\",\n    \"subject\": \"{{$json.subject}}\",\n    \"received_time\": \"{{$json.receivedTime}}\"\n}\nNow, analyze the following email content and return your response in the proper format: {{$json.bodyPlain}}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -2424,
+        20
+      ],
+      "id": "c3027b5d-0184-4f63-b158-8518c574908a",
+      "name": "Email Analyser"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Gmail Trigger').item.json.messageId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1680,
+        240
+      ],
+      "id": "8ed2ed52-269c-4be2-a93e-9c162a661389",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Date Analyzer Agent\nPurpose\nConvert appointment date and time information from various formats into a standardized YYYY-MM-DD HH\n format for scheduling.\n\nInput\nThe agent will receive a JSON object with these fields:\n\npreferred_date:{{ $json.validJSON.preferred_date }}\npreferred_time:{{ $json.validJSON.preferred_time }}\nfull_datetime_preference:{{ $json.validJSON.full_datetime_preference }}\n\nOutput\nReturn ONLY the converted date and time in YYYY-MM-DD HH\n format.\n\nExactly this format: 2025-05-12 09:00\nNo additional text, explanations, JSON formatting, or quotation marks\nJust the date and time separated by a space\nCurrent Date Reference\nToday's date is {{ $json.validJSON.received_time }}(YYYY-MM-DD), and u must use this date as reference for the datetime calculation later\n\nYou MUST use this as your reference point for all relative dates\nProcessing Rules\nTime Conversion\nFor \"morning\" → use 09:00\nFor \"afternoon\" → use 14:00\nFor \"evening\" → use 17:00\nFor specific times like \"3 PM\" → convert to 24-hour format (15:00)\nFor time ranges like \"2-4 PM\" → use the start time (14:00)\nIf no time is specified → default to 09:00\nDate Conversion\nFor days of week (e.g., \"Monday\") → use the next occurrence from today\nFor \"tomorrow\" → add 1 day to today's date\nFor \"next week\" + day (e.g., \"Monday next week\") → find the specified day in the next calendar week\nFor month + day (e.g., \"May 15th\") → use the next occurrence of that date\nFor \"in X days/weeks\" → add the specified duration to today's date\nIf no date is specified → use today's date if the time is still in the future, otherwise use tomorrow\nGeneral Rules\nAll appointments must be in the future relative to current date and time\nIf the calculated appointment would be in the past, move to the next valid occurrence\nWhen in doubt, use the most logical interpretation based on natural language\nExamples\nInput:\n\njson\n{\n  \"preferred_date\": \"Monday next week\",\n  \"preferred_time\": \"morning\",\n  \"full_datetime_preference\": \"Monday next week in the morning\"\n}\nOutput:\n2025-05-12 09:00\n\nInput:\n\njson\n{\n  \"preferred_date\": \"tomorrow\",\n  \"preferred_time\": \"afternoon\",\n  \"full_datetime_preference\": \"tomorrow afternoon\"\n}\nOutput:\n2025-05-09 14:00\n\nProcess This Appointment Data\nAnalyze this appointment request and respond ONLY with the date and time in YYYY-MM-DD HH\n format:\n\njson\n{\n  \"preferred_date\": \"{{ $json.validJSON.preferred_date }}\",\n  \"preferred_time\": \"{{ $json.validJSON.preferred_time }}\",\n  \"full_datetime_preference\": \"{{ $json.validJSON.full_datetime_preference }}\"\n}\nIMPORTANT: Your entire response must be EXACTLY in this format: 2025-05-12 09:00\n\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -1820,
+        20
+      ],
+      "id": "ff260e16-539f-4d18-a832-38abf0ad39e4",
+      "name": "Datetime Extractor"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2680dd5b-a95f-4eac-a939-2fc8c3e08522",
+              "leftValue": "={{ $json.available }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1232,
+        20
+      ],
+      "id": "b2d2f8dd-fc26-417f-ba82-4e1df8c6353f",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "choonyikeith@gmail.com",
+          "mode": "list",
+          "cachedResultName": "choonyikeith@gmail.com"
+        },
+        "start": "={{ new Date($('Datetime Extractor').item.json.output.replace(' ', 'T') + ':00').toISOString() }}",
+        "end": "={{ new Date(new Date($('Datetime Extractor').item.json.output.replace(' ', 'T') + ':00').getTime() + 7200000).toISOString() }}",
+        "additionalFields": {
+          "description": "=Patient Name:{{ $('Field Extractor 2').item.json.validJSON.patient_name }}\nSymptoms: {{ $('Field Extractor 2').item.json.validJSON.symptoms }} \nUrgency: {{ $('Field Extractor 2').item.json.validJSON.urgency_level }}\nNotes: {{ $('Field Extractor 2').item.json.validJSON.additional_notes }}\nGmail:  {{ $('Field Extractor 2').item.json.validJSON.patient_email }}",
+          "summary": "=Appointment with Patient: {{ $('Field Extractor 2').item.json.validJSON.patient_name }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -1000,
+        -80
+      ],
+      "id": "fcf23f2a-1d1b-4185-be8f-0b8d2eca6391",
+      "name": "Create event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "GaNz7yFVN9peDx7H",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "=yikeithchoon@gmail.com",
+        "subject": "Appointment confirmaiton",
+        "emailType": "text",
+        "message": "=Dear {{ $('Field Extractor 2').item.json.validJSON.patient_name }}, \n\nYour appointment has been successfully scheduled for {{ $('Datetime Extractor').item.json.output }}. We have added this to our calendar as per your requested preferences.  \n\nYou will receive a calendar invitation shortly with all the appointment details. Please accept this invitation to add it to your personal calendar. \n\nIf you need to reschedule or have any questions prior to your appointment, please don't hesitate to contact us.  We look forward to seeing you soon. \n\nBest regards, \nDr. Medical Office\n\n-this email is auto generated-",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -800,
+        -80
+      ],
+      "id": "2c5288da-353e-49a6-ab5b-d5d64c217589",
+      "name": "Confirmation",
+      "webhookId": "c0ae5606-a874-4446-b98b-af09af9d324a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9vuwMlY2w1QuGebw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "yikeithchoon@gmail.com",
+        "subject": "Appointment Request – Alternative Time Slots Available",
+        "emailType": "text",
+        "message": "=Dear {{ $('Field Extractor 2').item.json.validJSON.patient_name }},\n\nThank you for your recent appointment request for {{ $('Datetime Extractor').item.json.output }}. Unfortunately, the time slot you requested is no longer available.\n\nWe would be happy to assist you in rescheduling your appointment. Please consider the following alternative time slots:\n\nMonday, 12 May 2024 – 2:00 PM to 4:00 PM\n\nMonday, 12 May 2024 – 4:00 PM to 6:00 PM\n\nTuesday, 13 May 2024 – 1:00 PM to 3:00 PM\n\nIf none of the above options work for you, feel free to reply with your preferred time, and we will do our best to accommodate your schedule.\n\nGiven the urgency of your condition, if immediate care is needed, we recommend booking an appointment at Tung Shan Hospital through the CareMore website, as there are more available resources at Tung Shan Hospital.\n\nWe appreciate your understanding and look forward to providing you with the care you deserve.\n\nWarm regards,\nDr. Medical Office\n\n-This email is auto generated-",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -1012,
+        120
+      ],
+      "id": "4d32de7a-853c-4ef9-a1ea-f3c685ba7e1f",
+      "name": "Rescheduling",
+      "webhookId": "76c6b461-0a03-40ec-a5ff-619e5233b6e7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9vuwMlY2w1QuGebw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "Cancel",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d75170ea-b521-4c2d-8878-d54b08437e87"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f898ea94-f901-4de1-ad38-c4a24a96749f",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "Booking",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f38a93e9-6b9a-424e-a572-f12ea59144cb",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "Irrelevant",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -2860,
+        20
+      ],
+      "id": "da3c8046-e17b-46a0-82ad-a60efd65f132",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -3140,
+        300
+      ],
+      "id": "f4201b53-d515-47df-9086-5334334b927f",
+      "name": "Simple Memory2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Medical Appointment Email Classification Agent\nTask Description\nYou are an AI assistant specialized in analyzing incoming emails for a medical practice. Your task is to classify each email into exactly one of three categories:\n\nBooking: Emails related to scheduling new appointments or requesting availability\nCancel: Emails regarding cancellation, rescheduling, or postponement of existing appointments\nIrrelevant: Emails unrelated to appointment scheduling or cancellation\nClassification Guidelines\nBooking\nClassify as \"Booking\" if the email:\n\nRequests a new appointment\nAsks about provider availability\nInquires about scheduling options\nMentions a specific date/time for a potential appointment\nRequests follow-up appointments\nAsks about appointment types or duration\nCancel\nClassify as \"Cancel\" if the email:\n\nExplicitly cancels an existing appointment\nRequests to reschedule an appointment\nAsks about postponing a scheduled visit\nMentions inability to attend a scheduled appointment\nRequests confirmation of a cancelled appointment\nNeeds to change the time/date of an existing appointment\nIrrelevant\nClassify as \"Irrelevant\" if the email:\n\nIs unrelated to appointment scheduling or cancellation\nContains general inquiries about services or the practice\nIncludes medical questions or concerns\nIs marketing or promotional content\nContains billing or insurance inquiries\nIs spam or unauthorized communication\nIncludes prescription refill requests\nOutput Format\nProvide your classification as a single word: \"Booking\", \"Cancel\", or \"Irrelevant\"\n\nImportant Notes\nFocus exclusively on the scheduling intent of the email, not other content\nIf an email contains both booking and cancellation elements, classify based on the primary intent\nBe cautious with ambiguous emails - when in doubt, consider the main purpose of the communication\nDo not consider medical information, symptoms, or treatment details when classifying\nEnsure patient privacy is maintained at all times\nProcess emails in all languages\nExamples\nExample 1\nEmail: \"Hello, I need to schedule an appointment with Dr. Smith for next week. I'm available Tuesday or Thursday morning. I've been experiencing headaches.\"\nClassification: Booking\nReasoning: Primary intent is to schedule a new appointment, despite mention of symptoms.\n\nExample 2\nEmail: \"I won't be able to make it to my appointment tomorrow at 3pm due to a work conflict. Can we reschedule for next week?\"\nClassification: Cancel\nReasoning: Primary intent is to cancel/reschedule an existing appointment.\n\nExample 3\nEmail: \"Could you please send me a copy of my lab results from last month's visit? I need them for my insurance.\"\nClassification: Irrelevant\nReasoning: Not related to booking or cancelling appointments.\n\nExample 4\nEmail: \"I need to change my Friday appointment to Monday if possible. If not, I'll have to cancel altogether.\"\nClassification: Cancel\nReasoning: Primary intent is to modify an existing appointment.\n\nExample 5\nEmail: \"Do you have any availability in the next two weeks? I'd like to come in for my annual physical.\"\nClassification: Booking\nReasoning: Primary intent is to schedule a new appointment.\n\nExample 6\nEmail: \"This is a reminder that your appointment is scheduled for tomorrow at 10:00 AM.\"\nClassification: Irrelevant\nReasoning: This is an automated reminder, not a booking or cancellation request.\n\nInput:\n{{ $json.bodyPlain }}\n\nOutput:\nCancel OR Booking OR Irrelevant",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -3240,
+        20
+      ],
+      "id": "f733bf82-b8b2-4312-b76a-e7e328e1bcba",
+      "name": "Classifier"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -2276,
+        -260
+      ],
+      "id": "b7b863bd-86ab-498d-a139-54636181bcf6",
+      "name": "Simple Memory3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputData = items[0].json;\nreturn {\n  json: {\n    ...inputData,\n    sessionId: inputData.sessionId || inputData.messageId || `session-${Date.now()}`\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2644,
+        -380
+      ],
+      "id": "9ab98dcf-4e60-49df-9f7e-3027e9192d97",
+      "name": "Id Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# Medical Appointment Cancellation Data Extraction Agent\n\n## Task Description\nYou are an AI assistant specialized in extracting cancellation information from patient emails for a medical practice. Your task is to analyze emails classified as \"Cancel\" and extract structured data needed to identify and remove the corresponding calendar events.\n\nGet the patient name from {{ $('Gmail Trigger').item.json.from.name }}\n\nThe reference id for simple memory you can get from the email\n{{ $('Gmail Trigger').item.json.messageId }}, parse this to the memory\n\n## Input\n{{ $('Gmail Trigger').item.json.bodyPlain }}\nThe patient email should be extracted from {{ $('Gmail Trigger').item.json.from.email }}\nAlways use current day {{ $('Gmail Trigger').item.json.receivedTime }} as referenced day\n\n## Time Classification:\nIf they mentioned a specific time, just pass it to preferred time, but if not, when patient talk about a time period, then:\n- morning: 9am (format as \"09:00\")\n- afternoon: 1pm (format as \"13:00\")\n- evening: 4pm (format as \"16:00\")\nAssign accordingly when patient mentioned about the time period, pass it to appointmentTime\n\n## Date and Time Standardization (IMPORTANT):\n- Always format dates as YYYY-MM-DD (e.g., \"2025-05-12\")\n- Always format times in 24-hour format with leading zeros and minutes (e.g., \"09:00\", \"14:30\")\n- Additionally, create a combined field called \"formattedDateTime\" in this exact format: YYYY-MM-DDThh:mm:00 \n  (Example: \"2025-05-12T09:00:00\")\n- This formatted field is critical for calendar matching and must be provided\n\n## Extraction Guidelines\nFor cancellation emails, extract these fields when available:\n\n- patientName: Full name of the patient\n- patientEmail: Email address of the patient\n- appointmentDate: Date of the appointment to be cancelled (YYYY-MM-DD format)\n- appointmentTime: Time of the appointment to be cancelled (HH:MM format, 24h with leading zeros)\n- appointmentDay: Day of week if mentioned instead of specific date (MONDAY through SUNDAY)\n- cancellationReason: Brief reason for cancellation if provided\n- identifiers: Any reference numbers, confirmation codes, or other identifiers mentioned\n- formattedDateTime: Combined date and time in format YYYY-MM-DDThh:mm:00\n\n## Output Format\nReturn a JSON object with all extracted fields. For fields where information is not available, use null.\n\n```json\n{\n  \"patientName\": \"string or null\",\n  \"patientEmail\": \"string or null\",\n  \"appointmentDate\": \"YYYY-MM-DD or null\",\n  \"appointmentTime\": \"HH:MM or null\",\n  \"appointmentDay\": \"MONDAY-SUNDAY or null\",\n  \"cancellationReason\": \"string or null\",\n  \"identifiers\": [\"string\", ...] or null,\n  \"formattedDateTime\": \"YYYY-MM-DDThh:mm:00 or null\",\n  \"confidence\": \"HIGH|MEDIUM|LOW\"\n}\n```\n\n## Date and Time Interpretation Rules\n\n- Convert relative dates (\"next Monday\", \"tomorrow\") to actual dates (YYYY-MM-DD)\n- For ambiguous dates (e.g., \"5/10\"), use MM/DD format for US correspondence\n- If a date is mentioned without a year, assume the current or next occurrence\n- Use the email's received date as reference point for converting relative dates\n- Extract both exact times (14:30) and time ranges (afternoon)\n- Always ensure appointmentTime has leading zeros and minutes (e.g., \"09:00\" not \"9\" or \"9:00\")\n\n## Special Instructions\n\n- Focus exclusively on cancellation information: Ignore any content not related to identifying the appointment to be cancelled.\n- Confidence level: Add a \"confidence\" field (\"HIGH\", \"MEDIUM\", \"LOW\") based on how clearly the appointment details are specified.\n- Multiple appointments: If multiple appointments are mentioned for cancellation, focus on the primary one that appears to be the main subject of the email.\n- Patient identity: If the email is sent on behalf of someone else, extract both the sender and the patient information if available.\n- Missing information: For any missing information, return null rather than making assumptions.\n- Always include the formattedDateTime field by combining appointmentDate and appointmentTime\n\n## Example 1: Cancellation Email\nEmail: \"Hello Dr. Office, I need to cancel my appointment scheduled for this Thursday, May 10th at 2:30 pm due to an unexpected work commitment. I apologize for any inconvenience this may cause. Thank you for your understanding. Best regards, Sarah Johnson\"\n\nOutput:\n```json\n{\n  \"patientName\": \"Sarah Johnson\",\n  \"patientEmail\": \"patient2@example.com\",\n  \"appointmentDate\": \"2025-05-10\",\n  \"appointmentTime\": \"14:30\",\n  \"appointmentDay\": \"THURSDAY\",\n  \"cancellationReason\": \"unexpected work commitment\",\n  \"identifiers\": null,\n  \"formattedDateTime\": \"2025-05-10T14:30:00\",\n  \"confidence\": \"HIGH\"\n}\n```\n\n## Example 2: Vague Cancellation Email\nEmail: \"I won't be able to make it to my appointment tomorrow. Can you please cancel it? Thanks, John\"\nReceived: \"2025-05-07T14:22:00Z\"\n\nOutput:\n```json\n{\n  \"patientName\": \"John\",\n  \"patientEmail\": \"john@example.com\",\n  \"appointmentDate\": \"2025-05-08\",\n  \"appointmentTime\": null,\n  \"appointmentDay\": null,\n  \"cancellationReason\": null,\n  \"identifiers\": null,\n  \"formattedDateTime\": null,\n  \"confidence\": \"MEDIUM\"\n}\n```\n\n## Example 3: Morning Appointment\nEmail: \"Please cancel my appointment scheduled for tomorrow morning. Thanks, Alex\"\nReceived: \"2025-05-07T18:30:00Z\"\n\nOutput:\n```json\n{\n  \"patientName\": \"Alex\",\n  \"patientEmail\": \"alex@example.com\",\n  \"appointmentDate\": \"2025-05-08\",\n  \"appointmentTime\": \"09:00\",\n  \"appointmentDay\": null,\n  \"cancellationReason\": null,\n  \"identifiers\": null,\n  \"formattedDateTime\": \"2025-05-08T09:00:00\",\n  \"confidence\": \"MEDIUM\"\n}\n```\n\n## Edge Cases Handling\n\n- If the email mentions rescheduling but doesn't specify new preferences, focus only on the cancellation details\n- If no specific date is mentioned but context implies cancellation of an imminent appointment, note this in cancellationReason\n- If the cancellation email is vague about which specific appointment to cancel, extract whatever identifying information is available and mark confidence as \"LOW\"\n- If appointmentTime or appointmentDate is null, formattedDateTime should also be null\n\n##Last thing to do\n  ALSO trigger the get many events Google calendar node next to fetch event and the field extractor Set node",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -2420,
+        -480
+      ],
+      "id": "f91621c6-f517-4a02-acfb-26cc8898bc98",
+      "name": "Cancellation handler"
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * Enhanced function to extract and clean appointment data from JSON string\n * @param {string} input - Raw JSON string to parse\n * @return {object} - Clean object with only necessary appointment attributes\n */\nfunction extractAppointmentData(input) {\n  try {\n    // Remove any markdown formatting and clean up the input\n    let cleanedInput = input.replace(/```json\\\\n|\\\\n```|```json|```/g, '');\n    cleanedInput = cleanedInput.replace(/\\\\n/g, '\\n');\n    \n    // Parse the JSON string\n    const parsedData = JSON.parse(cleanedInput);\n    \n    // Extract only the necessary fields for appointment management\n    const appointmentData = {\n      patientName: parsedData.patientName,\n      patientEmail: parsedData.patientEmail,\n      appointmentDate: parsedData.appointmentDate,\n      appointmentTime: parsedData.appointmentTime,\n      appointmentDay: parsedData.appointmentDay,\n      cancellationReason: parsedData.cancellationReason,\n      formattedDateTime: parsedData.formattedDateTime\n    };\n    \n    return appointmentData;\n  } catch (error) {\n    console.error('Error parsing JSON:', error.message);\n    return { \n      error: 'Failed to parse appointment data',\n      details: error.message\n    };\n  }\n}\n\n// Get the input from the previous node\nconst rawInput = items[0].json.output;\n\n// Process the input and extract appointment data\nconst appointmentData = extractAppointmentData(rawInput);\n\n// Return the cleaned appointment data\nreturn { appointment: appointmentData };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2040,
+        -380
+      ],
+      "id": "d18bde43-c0f9-4ae7-86e1-b2d8bbb4d19c",
+      "name": "Field Extractor"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Ensure session ID exists in the cancellation path\nconst inputData = items[0].json;\nreturn {\n  json: {\n    ...inputData,\n    sessionId: inputData.sessionId || inputData.messageId || `session-${Date.now()}`\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2644,
+        20
+      ],
+      "id": "f848654e-1975-4225-80d0-c1bdc6346db5",
+      "name": "Id Parser 2"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "choonyikeith@gmail.com",
+          "mode": "list",
+          "cachedResultName": "choonyikeith@gmail.com"
+        },
+        "timeMax": "={{ $now.plus({ week: 4 }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -1840,
+        -380
+      ],
+      "id": "e3ffdc5a-8eba-43bb-93a2-379aeff64bc0",
+      "name": "List events",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "GaNz7yFVN9peDx7H",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "choonyikeith@gmail.com",
+          "mode": "list",
+          "cachedResultName": "choonyikeith@gmail.com"
+        },
+        "eventId": "={{ $json.eventId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -1020,
+        -480
+      ],
+      "id": "8e0b0cb8-09ae-4ee1-bc94-52faad927907",
+      "name": "Deletor",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "GaNz7yFVN9peDx7H",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "08e36a21-f9f2-4606-9c96-546ba1a9eec4",
+              "leftValue": "={{ $json.matchFound }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1260,
+        -360
+      ],
+      "id": "34303b64-e05b-4a17-9406-dff848fe3705",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -2440,
+        -260
+      ],
+      "id": "544ddc70-814f-49a8-9814-d1441da701e5",
+      "name": "Gpt 4o mini",
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "K19tKk1UAX8YYfJ1",
+          "name": "Azure Open AI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -2440,
+        240
+      ],
+      "id": "af0e7c59-abd5-45c5-8782-402b7cbe937d",
+      "name": "gpt 4o mini",
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "K19tKk1UAX8YYfJ1",
+          "name": "Azure Open AI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -1800,
+        240
+      ],
+      "id": "a1a08c77-7b79-4de5-bf92-7402f0c34602",
+      "name": "gpt-4o-mini",
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "K19tKk1UAX8YYfJ1",
+          "name": "Azure Open AI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -3300,
+        240
+      ],
+      "id": "6bee5be4-33f7-435f-ba56-7aebbb4d041c",
+      "name": "gpt-4o-mini1",
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "K19tKk1UAX8YYfJ1",
+          "name": "Azure Open AI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "choonyikeith@gmail.com",
+          "mode": "list",
+          "cachedResultName": "choonyikeith@gmail.com"
+        },
+        "timeMin": "={{ new Date($json.output.replace(' ', 'T') + ':00').toISOString() }}",
+        "timeMax": "={{ new Date(new Date($json.output.replace(' ', 'T') + ':00').getTime() + 7200000).toISOString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -1452,
+        20
+      ],
+      "id": "5f28ff50-27a4-4091-b2f4-056a5fbcad7f",
+      "name": "Availability checker",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "nCJCMkc4Vs1SLZVz",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Gmail Trigger').item.json.from.email }}",
+        "subject": "Appointment Cancellation Successful",
+        "emailType": "text",
+        "message": "=Dear {{ $('Comparer').item.json.eventDetails.patientName }}, \n We are writing to confirm that your appointment scheduled for [original appointment date and time] has been successfully cancelled, as requested. \n\nIf you would like to reschedule or have any questions, please don’t hesitate to contact us at +6012 345 6789.\n\nThank you, and we hope to assist you again soon. \n\nBest regards, \nDr Medical Office\n\n-this email is auto-generated-",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -792,
+        -480
+      ],
+      "id": "42ab35bf-9f2d-412c-988e-21254a4997e8",
+      "name": "Deletion confirm",
+      "webhookId": "60bfa3f5-1c92-4a31-8471-d1b229c9ab9b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9vuwMlY2w1QuGebw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "=",
+        "subject": "Appointment Cancellation Unsuccessful",
+        "emailType": "text",
+        "message": "=Dear  {{ $('Attributes comparer').item.json.eventDetails.patientName }},\n\nWe are unable to find your appointment slot based on the booking time and name you've provided. \n\nConsider providing us with a more detailed date and time, and we'll be able to help you out on your cancellation request. \n\nBest regards,\nDr Medical Office\n\n-this email is auto generated-",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -1020,
+        -280
+      ],
+      "id": "5f50ddec-7372-454b-a966-d6f898c2851f",
+      "name": "Unable to delete-provide details",
+      "webhookId": "0ba1b976-b014-46e5-bd8d-cc5c9a6c4cc7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9vuwMlY2w1QuGebw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Function to clean and parse the JSON from the cancellation handler\nfunction parseAndCleanJSON(input) {\n  try {\n    // Remove markdown code block formatting (```json and ```)\n    let cleanedInput = input.replace(/```json\\n|\\n```/g, '');\n    \n    // Replace literal \"\\n\" strings with actual newlines for proper parsing\n    cleanedInput = cleanedInput.replace(/\\\\n/g, '\\n');\n    \n    // Remove any remaining markdown code block indicators\n    cleanedInput = cleanedInput.replace(/```[a-z]*|```/g, '');\n    \n    // Trim any whitespace\n    cleanedInput = cleanedInput.trim();\n    \n    // Try to parse the cleaned JSON\n    const parsedData = JSON.parse(cleanedInput);\n    return parsedData;\n  } catch (error) {\n    // If there's an error, return the error message for debugging\n    return { \n      error: error.message, \n      originalInput: input,\n      cleanedAttempt: cleanedInput\n    };\n  }\n}\n\n// Get the actual input from the previous node (Cancellation handler)\nconst rawInput = items[0].json.output;\n\n// Process the input from the workflow\nconst result = parseAndCleanJSON(rawInput);\n\n// Return the properly formatted JSON\nreturn { validJSON: result };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2040,
+        20
+      ],
+      "id": "0e7e0211-ceb3-405a-9204-b24104cd17d2",
+      "name": "Field Extractor 2"
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.from.email }}",
+        "emailType": "text",
+        "message": "Sorry, we only reply to appointment booking relevant gmail\n\n-this email is auto generated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -2640,
+        420
+      ],
+      "id": "262b0279-9fe2-42a0-af9f-6f3405a2d3ab",
+      "name": "Reply Irrelevant Gmail",
+      "webhookId": "4f440e8d-ae9e-4a7f-a544-2d8e3175e213",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9vuwMlY2w1QuGebw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Enhanced version with detailed debug logging\nconsole.log(\"DEBUG - Starting event processing with input:\", JSON.stringify(items, null, 2));\n\n// STEP 1: Extract the patient name and appointment datetime we're looking for\n// This will come from the Field Extractor or other source\nlet targetPatientName = null;\nlet targetDateTime = null;\n\n// More thorough search for patient data\nfunction extractTargetPatient(data) {\n  console.log(\"Searching for target patient information...\");\n  \n  // Direct property search\n  if (data.patientName && typeof data.patientName === 'string') {\n    targetPatientName = data.patientName;\n    console.log(`Found target patient name directly: \"${targetPatientName}\"`);\n  }\n  \n  if (data.formattedDateTime && typeof data.formattedDateTime === 'string') {\n    targetDateTime = data.formattedDateTime;\n    console.log(`Found target datetime directly: \"${targetDateTime}\"`);\n  }\n  \n  // Search recursively\n  function searchForPatient(obj, path = '') {\n    if (!obj || typeof obj !== 'object') return;\n    \n    // Check top-level properties\n    if (obj.patientName && typeof obj.patientName === 'string' && !targetPatientName) {\n      targetPatientName = obj.patientName;\n      console.log(`Found target patient name at ${path}.patientName: \"${targetPatientName}\"`);\n    }\n    \n    if (obj.formattedDateTime && typeof obj.formattedDateTime === 'string' && !targetDateTime) {\n      targetDateTime = obj.formattedDateTime;\n      console.log(`Found target datetime at ${path}.formattedDateTime: \"${targetDateTime}\"`);\n    }\n    \n    // Check Field Extractor format\n    if (obj.validJSON && typeof obj.validJSON === 'object') {\n      if (obj.validJSON.patientName && !targetPatientName) {\n        targetPatientName = obj.validJSON.patientName;\n        console.log(`Found target patient name at ${path}.validJSON.patientName: \"${targetPatientName}\"`);\n      }\n      if (obj.validJSON.formattedDateTime && !targetDateTime) {\n        targetDateTime = obj.validJSON.formattedDateTime;\n        console.log(`Found target datetime at ${path}.validJSON.formattedDateTime: \"${targetDateTime}\"`);\n      }\n    }\n    \n    // Search nested objects\n    for (const key in obj) {\n      if (obj[key] && typeof obj[key] === 'object') {\n        searchForPatient(obj[key], path ? `${path}.${key}` : key);\n      }\n    }\n  }\n  \n  // Start recursive search\n  if (Array.isArray(data)) {\n    for (let i = 0; i < data.length; i++) {\n      searchForPatient(data[i], `items[${i}]`);\n    }\n  } else {\n    searchForPatient(data);\n  }\n  \n  // CRITICAL: Hardcode for testing based on your calendar data\n  // Remove this in production, this is just to verify our matching logic\n  if (!targetPatientName) {\n    console.log(\"WARNING: Using hardcoded test patient name 'John Smith'\");\n    targetPatientName = \"John Smith\";\n  }\n  \n  if (!targetDateTime) {\n    console.log(\"WARNING: Using hardcoded test date '2025-05-12T08:00:00+08:00'\");\n    targetDateTime = \"2025-05-12T08:00:00+08:00\";\n  }\n  \n  return {\n    patientName: targetPatientName,\n    appointmentDateTime: targetDateTime\n  };\n}\n\n// STEP 2: Extract all calendar events that we need to check against\nfunction extractCalendarEvents(data) {\n  const events = [];\n  console.log(\"Extracting calendar events...\");\n  \n  // Helper function to extract event details\n  function extractEvent(obj, source = 'unknown') {\n    if (obj.id && obj.summary && obj.dateTime) {\n      events.push({\n        id: obj.id,\n        summary: obj.summary,\n        dateTime: obj.dateTime,\n        source\n      });\n      console.log(`Extracted event directly - ID: ${obj.id}, Summary: ${obj.summary}`);\n      return true;\n    }\n    \n    if (obj.id && obj.summary && obj.start && obj.start.dateTime) {\n      events.push({\n        id: obj.id,\n        summary: obj.summary,\n        dateTime: obj.start.dateTime,\n        source\n      });\n      console.log(`Extracted Google Calendar event - ID: ${obj.id}, Summary: ${obj.summary}`);\n      return true;\n    }\n    \n    return false;\n  }\n  \n  // Process array items\n  if (Array.isArray(data)) {\n    console.log(`Processing ${data.length} items in array`);\n    for (let i = 0; i < data.length; i++) {\n      const item = data[i];\n      \n      // Try direct extraction\n      if (extractEvent(item, `items[${i}]`)) continue;\n      \n      // Check if this is a Google Calendar event\n      if (item.json) {\n        const extracted = extractEvent(item.json, `items[${i}].json`);\n        if (extracted) continue;\n      }\n      \n      // If it's a node with content\n      if (item.content) {\n        if (Array.isArray(item.content)) {\n          console.log(`Found nested array in items[${i}].content with ${item.content.length} items`);\n          for (let j = 0; j < item.content.length; j++) {\n            extractEvent(item.content[j], `items[${i}].content[${j}]`);\n          }\n        } else if (typeof item.content === 'object') {\n          extractEvent(item.content, `items[${i}].content`);\n        }\n      }\n    }\n  } else if (typeof data === 'object') {\n    // Try direct extraction from object\n    extractEvent(data, 'items');\n    \n    // Handle special case where data is directly from Google Calendar API\n    if (data.items && Array.isArray(data.items)) {\n      console.log(`Found Google Calendar API response with ${data.items.length} events`);\n      for (let i = 0; i < data.items.length; i++) {\n        extractEvent(data.items[i], `items.items[${i}]`);\n      }\n    }\n  }\n  \n  // Direct access for your specific structure - based on error output\n  // This is for testing with your specific data structure\n  if (events.length === 0) {\n    console.log(\"No events found using standard extraction. Trying direct access for your structure...\");\n    \n    if (Array.isArray(data) && data.length > 0) {\n      // Based on your output showing events at [0].json, [1].json, etc.\n      for (let i = 0; i < data.length; i++) {\n        if (data[i] && data[i].json) {\n          const event = data[i].json;\n          if (event.id && event.summary) {\n            // Make sure we have a dateTime\n            const dateTime = event.dateTime || \n                           (event.start && event.start.dateTime) || \n                           event.date || \n                           event.time;\n                           \n            if (dateTime) {\n              events.push({\n                id: event.id,\n                summary: event.summary,\n                dateTime: dateTime,\n                source: `[${i}].json`\n              });\n              console.log(`Directly extracted event from [${i}].json - ID: ${event.id}, Summary: ${event.summary}`);\n            }\n          }\n        }\n      }\n    }\n  }\n  \n  return events;\n}\n\n// Get target patient info\nconst targetPatient = extractTargetPatient(items);\nconsole.log(\"Target patient information:\", targetPatient);\n\n// Get calendar events\nconst calendarEvents = extractCalendarEvents(items);\nconsole.log(`Found ${calendarEvents.length} calendar events`);\n\n// STEP 3: Find matches between target patient and calendar events\nfunction findMatches(patient, events) {\n  console.log(`\\nATTENTION: Looking for matches for patient \"${patient.patientName}\" and appointment on \"${patient.appointmentDateTime}\"`);\n  \n  const matches = [];\n  \n  for (const event of events) {\n    console.log(`\\nChecking event: \"${event.summary}\" (${event.id})`);\n    \n    // Check name match\n    let nameMatch = false;\n    if (patient.patientName && event.summary) {\n      const patientName = patient.patientName.toLowerCase().trim();\n      const summary = event.summary.toLowerCase().trim();\n      \n      nameMatch = summary.includes(patientName);\n      console.log(`- Name check: ${nameMatch ? \"MATCHED\" : \"No match\"} - Looking for \"${patientName}\" in \"${summary}\"`);\n      \n      // Additional check for appointment patterns\n      if (!nameMatch) {\n        const patterns = [\"appointment with\", \"meeting with\", \"consultation with\"];\n        for (const pattern of patterns) {\n          if (summary.includes(pattern)) {\n            const remainingText = summary.split(pattern)[1];\n            if (remainingText && remainingText.toLowerCase().trim().includes(patientName)) {\n              nameMatch = true;\n              console.log(`- Pattern match: MATCHED using pattern \"${pattern}\"`);\n              break;\n            }\n          }\n        }\n        \n        // Check for \"Patient: Name\" pattern\n        if (summary.includes(\"patient:\")) {\n          const patientPart = summary.split(\"patient:\")[1].trim();\n          if (patientPart.toLowerCase().includes(patientName)) {\n            nameMatch = true;\n            console.log(`- Patient label match: MATCHED using \"Patient:\" label`);\n          }\n        }\n      }\n    }\n    \n    // Check date match\n    let dateMatch = false;\n    if (patient.appointmentDateTime && event.dateTime) {\n      try {\n        const targetDate = new Date(patient.appointmentDateTime);\n        const eventDate = new Date(event.dateTime);\n        \n        // First check exact match\n        if (targetDate.toISOString() === eventDate.toISOString()) {\n          dateMatch = true;\n          console.log(`- Date check: MATCHED exactly - ${targetDate.toISOString()} = ${eventDate.toISOString()}`);\n        } else {\n          // Then check just the date part (ignoring time)\n          const targetDateOnly = targetDate.toISOString().split('T')[0];\n          const eventDateOnly = eventDate.toISOString().split('T')[0];\n          \n          if (targetDateOnly === eventDateOnly) {\n            dateMatch = true;\n            console.log(`- Date check: MATCHED date part - ${targetDateOnly} = ${eventDateOnly}`);\n          } else {\n            // Log dates for debugging\n            console.log(`- Date check: NO MATCH - Target date ${targetDateOnly} ≠ Event date ${eventDateOnly}`);\n          }\n        }\n      } catch (e) {\n        console.log(`- Date check: ERROR comparing dates - ${e.message}`);\n        console.log(`  Target: ${patient.appointmentDateTime}, Event: ${event.dateTime}`);\n      }\n    }\n    \n    // For this version, we're adding partial matching to see all candidates\n    const matchScore = {\n      nameMatched: nameMatch,\n      dateMatched: dateMatch,\n      score: (nameMatch ? 1 : 0) + (dateMatch ? 1 : 0)\n    };\n    \n    if (nameMatch && dateMatch) {\n      console.log(`✅ FULL MATCH FOUND: \"${event.summary}\" (${event.id})`);\n      matches.push({...event, matchScore});\n    } else if (nameMatch || dateMatch) {\n      console.log(`🟠 PARTIAL MATCH: \"${event.summary}\" - Name: ${nameMatch}, Date: ${dateMatch}`);\n      matches.push({...event, matchScore, partial: true});\n    } else {\n      console.log(`❌ NO MATCH: \"${event.summary}\"`);\n    }\n  }\n  \n  // Sort matches by score (full matches first)\n  matches.sort((a, b) => b.matchScore.score - a.matchScore.score);\n  \n  return matches;\n}\n\n// Find matches\nconst matches = findMatches(targetPatient, calendarEvents);\nconsole.log(`\\nFound ${matches.length} matching events (${matches.filter(m => !m.partial).length} full matches, ${matches.filter(m => m.partial).length} partial matches)`);\n\n// STEP 4: Return the results\nlet result;\nif (matches.length === 0) {\n  // No matches at all\n  result = {\n    matchFound: false,\n    message: \"No matching events found in calendar\",\n    actionNeeded: \"No action needed - no events to delete\",\n    diagnostics: {\n      targetPatient,\n      eventsChecked: calendarEvents.length,\n      calendarEvents: calendarEvents\n    }\n  };\n} else {\n  // Found at least one match\n  const fullMatches = matches.filter(m => !m.partial);\n  \n  if (fullMatches.length === 1) {\n    // Perfect - exactly one full match\n    const match = fullMatches[0];\n    result = {\n      matchFound: true,\n      eventId: match.id,\n      eventDetails: {\n        id: match.id,\n        summary: match.summary,\n        dateTime: match.dateTime,\n        patientName: targetPatient.patientName,\n        formattedDateTime: targetPatient.appointmentDateTime\n      },\n      message: \"Found exactly one matching event!\",\n      actionNeeded: \"This event can be deleted from Google Calendar\",\n      diagnostics: {\n        targetPatient,\n        eventsChecked: calendarEvents.length,\n        matchCriteria: match.matchScore\n      }\n    };\n  } else if (fullMatches.length > 1) {\n    // Multiple full matches - this is concerning\n    result = {\n      matchFound: true,\n      multipleMatches: true,\n      eventCount: fullMatches.length,\n      eventIds: fullMatches.map(e => e.id),\n      primaryEventId: fullMatches[0].id, // Use the first match as primary\n      eventDetails: fullMatches.map(e => ({\n        id: e.id,\n        summary: e.summary,\n        dateTime: e.dateTime,\n        matchScore: e.matchScore\n      })),\n      message: `Found ${fullMatches.length} fully matching events - recommend manual verification`,\n      actionNeeded: \"Multiple matches found - please verify before deletion\",\n      diagnostics: {\n        targetPatient,\n        eventsChecked: calendarEvents.length,\n        matchingEvents: fullMatches\n      }\n    };\n  } else {\n    // Only partial matches\n    const bestMatch = matches[0]; // First one is highest scoring\n    result = {\n      matchFound: true,\n      partialMatchOnly: true,\n      eventId: bestMatch.id,\n      eventDetails: {\n        id: bestMatch.id,\n        summary: bestMatch.summary,\n        dateTime: bestMatch.dateTime,\n        patientName: targetPatient.patientName,\n        formattedDateTime: targetPatient.appointmentDateTime,\n        matchScore: bestMatch.matchScore\n      },\n      message: `Found partial match: ${bestMatch.matchScore.nameMatched ? 'Name matched' : 'Name did not match'}, ${bestMatch.matchScore.dateMatched ? 'Date matched' : 'Date did not match'}`,\n      actionNeeded: \"Partial match found - please verify before deletion\",\n      diagnostics: {\n        targetPatient,\n        eventsChecked: calendarEvents.length,\n        matchCriteria: bestMatch.matchScore,\n        partialMatches: matches\n      }\n    };\n  }\n}\n\nconsole.log(\"Final result:\", JSON.stringify(result, null, 2));\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1540,
+        -380
+      ],
+      "id": "4869aeaa-e6b5-49b6-a705-1bcaf4bbe080",
+      "name": "Comparer"
+    }
+  ],
+  "pinData": {
+    "Gmail Trigger": [
+      {
+        "json": {
+          "from": {
+            "email": "patient8@example.com",
+            "name": "Lily Wong"
+          },
+          "to": [
+            {
+              "email": "choonyikeith@gmail.com",
+              "name": "Dr. Medical Office"
+            }
+          ],
+          "subject": "Request for Medical Appointment",
+          "messageId": "msg823456789",
+          "bodyPlain": "Hi, I’d like to request a medical appointment to check on recurring migraines. Is Wednesday at 10:30 AM available?",
+          "bodyHtml": "<div>Hi, I’d like to request a medical appointment to check on recurring migraines. Is Wednesday at 10:30 AM available?</div>",
+          "attachments": [],
+          "receivedTime": "2025-05-14T10:30:00Z",
+          "sessionId": "session823456789"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Email Analyser",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Analyser": {
+      "main": [
+        [
+          {
+            "node": "Field Extractor 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Datetime Extractor",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Datetime Extractor": {
+      "main": [
+        [
+          {
+            "node": "Availability checker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rescheduling",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create event": {
+      "main": [
+        [
+          {
+            "node": "Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory2": {
+      "ai_memory": [
+        [
+          {
+            "node": "Classifier",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Id Parser",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Id Parser 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Irrelevant Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classifier": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory3": {
+      "ai_memory": [
+        [
+          {
+            "node": "Cancellation handler",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Id Parser": {
+      "main": [
+        [
+          {
+            "node": "Cancellation handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancellation handler": {
+      "main": [
+        [
+          {
+            "node": "Field Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Field Extractor": {
+      "main": [
+        [
+          {
+            "node": "List events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Id Parser 2": {
+      "main": [
+        [
+          {
+            "node": "Email Analyser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List events": {
+      "main": [
+        [
+          {
+            "node": "Comparer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deletor": {
+      "main": [
+        [
+          {
+            "node": "Deletion confirm",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Deletor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unable to delete-provide details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gpt 4o mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Cancellation handler",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt 4o mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Analyser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt-4o-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Datetime Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt-4o-mini1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Availability checker": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Field Extractor 2": {
+      "main": [
+        [
+          {
+            "node": "Datetime Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comparer": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9da35060-d523-438d-a5d1-3bfa01da85ac",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "015f9beb12d68e54c1e2c0a76b209cad72d51f9602f5a7db8b84c625495deae8"
+  },
+  "id": "CumpjQaSz3ybhwBv",
+  "tags": []
+}

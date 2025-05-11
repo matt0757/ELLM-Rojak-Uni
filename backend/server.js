@@ -215,7 +215,6 @@ app.post('/api/appointments', async (req, res) => {
     }
 });
 
-// Get appointments for a clinician on a specific date
 app.post('/api/appointments/by-date', async (req, res) => {
     try {
         const { clinicianId, date } = req.body;
@@ -223,34 +222,54 @@ app.post('/api/appointments/by-date', async (req, res) => {
             return res.status(400).json({ success: false, message: 'clinicianId and date are required' });
         }
 
-        // Find all users who have appointments with this clinician
-        const users = await User.find({ 'appointments.clinicianId': mongoose.Types.ObjectId(clinicianId) });
+        // Create a Date object from the input date string
+        const searchDate = new Date(date);
 
-        // Collect matching appointments
+        // Set the time to the beginning of the day (00:00:00)
+        searchDate.setUTCHours(0, 0, 0, 0);
+
+        // Create a new Date object for the end of the day (23:59:59.999)
+        const endOfDay = new Date(searchDate);
+        endOfDay.setUTCHours(23, 59, 59, 999);
+
+
+        // Find users who have appointments within the specified date range and clinicianId
+        const users = await User.find({
+            appointments: {
+                $elemMatch: {
+                    clinicianId: mongoose.Types.ObjectId(clinicianId),
+                    date: {
+                        $gte: searchDate,
+                        $lte: endOfDay
+                    }
+                }
+            }
+        });
+
+        // Collect matching appointments from the found users
         const appointments = [];
         users.forEach(user => {
             user.appointments.forEach(apt => {
-                // Convert both to string for comparison and check date as string (YYYY-MM-DD)
+                // Although $elemMatch should filter, double-check conditions for robustness
+                // Ensure apt.date is treated as a Date object for comparison
+                 const aptDate = apt.date instanceof Date ? apt.date : new Date(apt.date);
+
                 if (
                     apt.clinicianId &&
                     apt.clinicianId.toString() === clinicianId.toString() &&
-                    (
-                        // Handle both Date and string types for apt.date
-                        (apt.date instanceof Date
-                            ? apt.date.toISOString().slice(0, 10)
-                            : apt.date.slice(0, 10)
-                        ) === date
-                    )
+                    aptDate >= searchDate &&
+                    aptDate <= endOfDay
                 ) {
                     appointments.push({
                         ...apt._doc,
                         patient: user.name || user.fullname || user.email,
-                        patientId: user._id,
-                        email: user.email
+                        patientId: user._id, // Include patientId for fetching records
+                        email: user.email // Include email for fetching records
                     });
                 }
             });
         });
+
 
         res.json({ success: true, appointments });
     } catch (error) {
