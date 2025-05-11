@@ -7,7 +7,7 @@ A comprehensive web-based platform designed to connect patients and healthcare p
 - **Emergency Alert System**: Instantly notify emergency contacts or nearby hospitals during critical situations.
 - **AI Triage Assistant (Dr. Universal)**: Guides patients on whether to stay home, visit a clinic, or go to the hospital based on symptom input.
 - **Appointment Booking (Ms. Carey)**: Patients can book appointments; doctors' schedules update automatically to reflect availability.
-- **Patient Vault (Mr.Vault) **: Secure storage for patient medical records, including allergies and current medications.
+- **Patient Vault (Mr.Vault)**: Secure storage for patient medical records, including allergies and current medications.
 - **Hospital / Clinic Checker**: Search for nearby hospitals to reduce waiting time.
 - **Doctor Dashboard**:
   - View patient records
