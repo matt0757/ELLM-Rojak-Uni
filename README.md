@@ -16,8 +16,9 @@ A comprehensive web-based platform designed to connect patients and healthcare p
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Html/Css
+- **Frontend**: Html/Css/TypeScript
 - **Backend**: Javascript
+- **Automation**: n8n
 - **Database**: MongoDB
 - **AI/ML**: Python (for triage prediction models)
 
