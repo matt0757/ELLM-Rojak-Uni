@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareMore | Support Us</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .page-wrapper {
+            flex: 1 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            flex: 1; /* Logo takes available space */
+            font-size: 28px;
+            font-weight: bold;
+            color: #2d3721;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .logo span {
+            color: #2d3721;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-right: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #2c6fb0; /* Blue */
+            font-weight: 500;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            height: 34px;
+        }
+
+        .nav-links a:hover {
+            color: #1e5a94; /* Darker blue on hover */
+        }
+
+        .icon-button {
+            background-color: #2c6fb0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto; /* Pushes the icon button to the right */
+        }
+
+        /* Footer Styles */
+        footer {
+            flex-shrink: 0;
+            width: 100%;
+            margin-top: auto;
+            background-color: #2d3721;
+            padding: 50px 0;
+            color: #ffffff;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .footer-column {
+            flex: 1;
+        }
+
+        .footer-column h3 {
+            color: #ffffff;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-column p {
+            color: #ffffff;
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: start;
+            gap: 8px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            opacity: 1;
+        }
+
+        .footer-logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-column a {
+            color: #ffffff;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .footer-column a:hover {
+            opacity: 1;
+        }
+
+        .footer-column svg {
+            margin-top: 4px;
+        }
+
+        .footer-bottom {
+            margin-top: 40px;
+        }
+
+        .footer-divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 0 0 20px 0;
+        }
+
+        .copyright-text {
+            text-align: center;
+            color: #ffffff;
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        /* Add to your existing styles */
+        .sign-out-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+            height: 34px; /* Match height with other nav links */
+            width: 34px; /* Make it square */
+        }
+
+        .sign-out-btn:hover {
+            background-color: #c3e0fa; /* Slightly darker blue on hover */
+        }
+
+        .sign-out-btn svg {
+            color: #2c6fb0; /* Blue icon */
+            stroke: #2c6fb0; /* Blue stroke for SVG */
+            transition: color 0.3s, stroke 0.3s;
+        }
+
+        .sign-out-btn:hover svg {
+            color: #1e5a94;
+            stroke: #1e5a94;
+        }
+
+        /* Support Page Specific Styles */
+        .support-hero {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1519681393784-d120267933ba');
+            background-size: cover;
+            background-position: center;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .support-hero-content {
+            position: relative;
+            z-index: 1;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .support-hero h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color:  #85c8ff;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .support-hero p {
+            font-size: 18px;
+            color: white;
+            max-width: 700px;
+            margin: 0 auto;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .support-options {
+            padding: 70px 0;
+            background-color: white;
+        }
+
+        .support-section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .support-section-header h2 {
+            font-size: 32px;
+            color: #2d3721;
+            margin-bottom: 15px;
+        }
+
+        .support-section-header p {
+            font-size: 18px;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .support-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .support-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #e9e9e9;
+        }
+
+        .support-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .support-card-icon {
+            width: 70px;
+            height: 70px;
+            background-color: #f0faf0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .support-card-icon svg {
+            color:  #85c8ff;
+            width: 35px;
+            height: 35px;
+        }
+
+        .support-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #2d3721;
+        }
+
+        .support-card p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .support-price {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2d3721;
+            margin: 15px 0;
+        }
+
+        .support-price span {
+            font-size: 16px;
+            color: #666;
+            font-weight: normal;
+        }
+
+        .support-features {
+            list-style: none;
+            text-align: left;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .support-features li {
+            margin-bottom: 10px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .support-features li svg {
+            color: #85c8ff;
+            flex-shrink: 0;
+        }
+
+        .support-btn {
+            background-color:  #85c8ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: auto;
+        }
+
+        .support-btn:hover {
+            background-color:  #2ea1ff;
+        }
+
+        .support-btn.outlined {
+            background-color: transparent;
+            border: 2px solid  #85c8ff;
+            color:  #85c8ff;
+        }
+
+        .support-btn.outlined:hover {
+            background-color:  #2ea1ff;
+            color: white;
+        }
+
+        .donation-section {
+            padding: 70px 0;
+            background-color: #f9f9f9;
+        }
+
+        .donation-options {
+            display: flex;
+            flex-direction: column;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        .donation-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .amount-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .amount-option {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .amount-option:hover, .amount-option.active {
+            background-color: #2ea1ff;
+            color: white;
+            border-color: #2ea1ff;
+        }
+
+        .custom-amount {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .donate-btn {
+            background-color: #85c8ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        .donate-btn:hover {
+            background-color: #2ea1ff;
+        }
+
+        .partnership-section {
+            padding: 70px 0;
+            background-color: white;
+        }
+
+        .partnership-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            margin-top: 40px;
+        }
+
+        .partnership-image {
+            flex: 1;
+            text-align: center;
+        }
+
+        .partnership-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .partnership-text {
+            flex: 1;
+        }
+
+        .partnership-text h3 {
+            font-size: 24px;
+            color: #2d3721;
+            margin-bottom: 20px;
+        }
+
+        .partnership-text p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .partnership-features {
+            margin: 20px 0;
+        }
+
+        .partnership-features li {
+            margin-bottom: 15px;
+            color: #666;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .partnership-features li svg {
+            color: #85c8ff;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-size: 36px;
+            color: #2d3721;
+            margin-bottom: 15px;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        .contact-section {
+            padding: 80px 0;
+            background-color: white;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .contact-item {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .contact-icon {
+            margin-bottom: 15px;
+            color: #2d3721;
+        }
+
+        .contact-item h3 {
+            color: #2d3721;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .contact-item p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .contact-item a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .contact-item a:hover {
+            color: #2d3721;
+        }
+
+        @media (max-width: 768px) {
+            .contact-info {
+                flex-direction: column;
+            }
+            
+            .contact-item {
+                min-width: 100%;
+            }
+        }
+        @media (max-width: 768px) {
+            .support-cards {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .support-card {
+                width: 100%;
+                max-width: 350px;
+            }
+
+            .partnership-content {
+                flex-direction: column;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-column {
+                margin-bottom: 30px;
+            }
+
+            .footer-logo {
+                justify-content: center;
+            }
+
+            .footer-column p {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Header Section -->
+        <header>
+            <div class="container navbar">
+                <div class="logo">
+                    <img src = "logo img/Blue and White Circle Surfing Club Logo.jpg" alt = "CareMore Icon" class = "logo-icon">
+                    CareMore</span>
+                </div>
+                <div class="nav-links">
+                    <a href="mainpage.html">Home</a>
+                    <a href ="mainpage.html#about">About</a>
+                    <a href="activity.html">Activity</a>
+                    <a href="#mainpage.html#services">Services</a>
+                    <a href="support.html">Support</a>
+                    <a href="#contact">Contact</a>
+                    <a href="login.html" class="sign-out-btn" title="Sign Out">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </a>
+                </div>
+                <button class="icon-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="9" y1="9" x2="15" y2="9"></line>
+                        <line x1="9" y1="12" x2="15" y2="12"></line>
+                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Support Hero Section -->
+        <section class="support-hero">
+            <div class="support-hero-content">
+                <h1>Support CareMore</h1>
+                <p>Help us make healthcare more accessible and affordable for everyone</p>
+            </div>
+        </section>
+
+        <!-- Support Options Section -->
+        <section class="support-options">
+            <div class="container">
+                <div class="support-section-header">
+                    <h2>Choose Your Support Plan</h2>
+                    <p>Join our mission to revolutionize healthcare through AI-powered solutions</p>
+                </div>
+                <div class="support-cards">
+                    <!-- Basic Plan -->
+                    <div class="support-card">
+                        <div class="support-card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path>
+                            </svg>
+                        </div>
+                        <h3>Basic Support</h3>
+                        <p>Perfect for individuals who want to contribute to our cause</p>
+                        <div class="support-price">RM25<span>/month</span></div>
+                        <ul class="support-features">
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Access to Dr. Universal AI pre-diagnosis
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Basic medical record storage
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Email support
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Free Trial for 30 days
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Free for B40 families and individuals, contact us for verification!
+                            </li>
+                        </ul>
+                        <a href="#" class="support-btn">Subscribe Now</a>
+                    </div>
+
+                    <!-- Premium Plan -->
+                    <div class="support-card">
+                        <div class="support-card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7-6.3-4.6L5.7 21l2.3-7-6-4.6h7.6L12 2z"></path>
+                            </svg>
+                        </div>
+                        <h3>Premium Support</h3>
+                        <p>Ideal for families and medical practitioners</p>
+                        <div class="support-price">RM75<span>/month</span></div>
+                        <ul class="support-features">
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                All features from Basic plan
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Priority appointment scheduling
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Unlimited medical record storage
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                24/7 phone and email support
+                            </li>
+                        </ul>
+                        <a href="#" class="support-btn">Subscribe Now</a>
+                    </div>
+
+                    <!-- Enterprise Plan -->
+                    <div class="support-card">
+                        <div class="support-card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </div>
+                        <h3>Enterprise Support</h3>
+                        <p>Perfect for hospitals and healthcare organizations</p>
+                        <div class="support-price">Contact Us<span> for pricing</span></div>
+                        <ul class="support-features">
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                All features from Premium plan
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Custom API integration
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Dedicated account manager
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Staff training and onboarding
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Custom reporting and analytics
+                            </li>
+                        </ul>
+                        <a href="#" class="support-btn">Contact Sales</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Donation Section -->
+        <section class="donation-section" id="donate">
+            <div class="container">
+                <div class="support-section-header">
+                    <h2>Make a Donation</h2>
+                    <p>Your contribution helps us provide better healthcare services to underserved communities</p>
+                </div>
+                <div class="donation-options">
+                    <form class="donation-form">
+                        <div class="form-group">
+                            <label>Choose an amount</label>
+                            <div class="amount-options">
+                                <div class="amount-option">RM10</div>
+                                <div class="amount-option">RM25</div>
+                                <div class="amount-option">RM50</div>
+                                <div class="amount-option">RM100</div>
+                                <input type="text" placeholder="Custom amount" class="form-control custom-amount">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" class="form-control" placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" class="form-control" placeholder="Enter your email address">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message (Optional)</label>
+                            <textarea id="message" class="form-control" rows="4" placeholder="Share why you're supporting CareMore"></textarea>
+                        </div>
+                        <button type="submit" class="donate-btn">Donate Now</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Partnership Section -->
+        <section class="partnership-section">
+            <div class="container">
+                <div class="support-section-header">
+                    <h2>Corporate Partnerships</h2>
+                    <p>Join us in our mission to transform healthcare through innovative technology</p>
+                </div>
+                <div class="partnership-content">
+                    <div class="partnership-image">
+                        <img src="https://th.bing.com/th/id/OIP.Ug6L-W0VwyKonNUUXSb4ugHaE7?rs=1&pid=ImgDetMain" alt="Partnership" title="Together We Make The World A Better Place!">
+                    </div>
+                    <div class="partnership-text">
+                        <h3>Why Partner With CareMore?</h3>
+                        <p>Partnering with CareMore gives your organization access to cutting-edge healthcare technology while also making a positive impact on communities worldwide.</p>
+                        <ul class="partnership-features">
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <div>Access to our AI-powered healthcare platform that can be customized to your organization's needs</div>
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <div>Co-branding opportunities to enhance your company's social responsibility profile</div>
+                            </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <div>Employee wellness programs that leverage our technology for better health outcomes</div>
+                            </li>
+                                <li>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    <div>Exclusive access to our research and development initiatives</div>
+                                </li>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <div>Networking opportunities with other healthcare leaders and innovators</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Contact Us</h2>
+                    <p>Have questions about our services? Reach out to our support team.</p>
+                </div>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                        </div>
+                        <h3>Email</h3>
+                        <p><a href="mailto:rojakuni@gmail.com">rojakuni@gmail.com</a></p>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                        </div>
+                        <h3>Phone</h3>
+                        <p>03-7967 3502</p>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                        </div>
+                        <h3>Address</h3>
+                        <p>Universiti Malaya, 50603 Kuala Lumpur,<br>Wilayah Persekutuan Kuala Lumpur</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+        
+        <!-- Footer Section -->
+        <footer>
+            <div class="container footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        CareMore <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff" stroke="currentColor" stroke-width="2">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                    </div>
+                    <p>Providing quality healthcare services with a focus on patient-centered care and excellence in medical practice.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="Dr.Universal.html">Dr. Universal</a></li>
+                        <li><a href="Ms.Carey.html">Ms. Carey</a></li>
+                        <li><a href="vault.html">Mr. Vault</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <p>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        Universiti Malaya,<br>
+                        50603 Kuala Lumpur,<br>
+                        Wilayah Persekutuan Kuala Lumpur.
+                    </p>
+                    <p>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        03-7967 3502
+                    </p>
+                    <p>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        <a href="mailto:rojakuni@gmail.com">rojakuni@gmail.com</a>
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="container">
+                    <hr class="footer-divider">
+                    <p class="copyright-text">© 2025 CareMore. Powered by RojakUni. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

@@ -441,43 +441,38 @@
         // Form validation and submission
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const type = document.getElementById('login-type').value;
-
+            
             try {
-                const response = await fetch(`${API_BASE_URL}/login`, {
+                const response = await fetch('http://localhost:5000/api/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ email, password, type })
+                    body: JSON.stringify({
+                        email: document.getElementById('login-email').value,
+                        password: document.getElementById('login-password').value,
+                        type: document.getElementById('login-type').value
+                    })
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
-                    // Store session data
-                    sessionStorage.setItem('currentUser', JSON.stringify(data.user));
-                    sessionStorage.setItem('token', data.token);
-                    sessionStorage.setItem('userType', data.user.type);
-
-                    showSuccessNotification('Login successful! Redirecting...');
-                    
-                    // Redirect based on user type
-                    setTimeout(() => {
-                        if (data.user.type === 'clinician') {
-                            window.location.href = 'clinician.html';
-                        } else {
-                            window.location.href = 'mainpage.html';
-                        }
-                    }, 1500);
+                    if (data.user.type === 'clinician') {
+                        // Only store session for clinician
+                        sessionStorage.setItem('currentUser', JSON.stringify(data.user));
+                        sessionStorage.setItem('token', data.token);
+                        window.location.href = 'clinician.html';
+                    } else {
+                        // For patients, just redirect without storing session
+                        window.location.href = 'mainpage.html';
+                    }
                 } else {
                     showErrorNotification(data.message || 'Login failed');
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                showErrorNotification('Server error. Please try again later.');
+                showErrorNotification('Server error. Please try again.');
             }
         });
 

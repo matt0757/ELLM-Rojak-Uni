@@ -215,5 +215,136 @@ app.post('/api/appointments', async (req, res) => {
     }
 });
 
+// Get appointments for a clinician on a specific date
+app.post('/api/appointments/by-date', async (req, res) => {
+    try {
+        const { clinicianId, date } = req.body;
+        if (!clinicianId || !date) {
+            return res.status(400).json({ success: false, message: 'clinicianId and date are required' });
+        }
+
+        // Find all users who have appointments with this clinician
+        const users = await User.find({ 'appointments.clinicianId': mongoose.Types.ObjectId(clinicianId) });
+
+        // Collect matching appointments
+        const appointments = [];
+        users.forEach(user => {
+            user.appointments.forEach(apt => {
+                // Convert both to string for comparison and check date as string (YYYY-MM-DD)
+                if (
+                    apt.clinicianId &&
+                    apt.clinicianId.toString() === clinicianId.toString() &&
+                    (
+                        // Handle both Date and string types for apt.date
+                        (apt.date instanceof Date
+                            ? apt.date.toISOString().slice(0, 10)
+                            : apt.date.slice(0, 10)
+                        ) === date
+                    )
+                ) {
+                    appointments.push({
+                        ...apt._doc,
+                        patient: user.name || user.fullname || user.email,
+                        patientId: user._id,
+                        email: user.email
+                    });
+                }
+            });
+        });
+
+        res.json({ success: true, appointments });
+    } catch (error) {
+        console.error('Error fetching appointments by date:', error);
+        res.status(500).json({ success: false, message: 'Server error fetching appointments' });
+    }
+});
+
+// Analytics endpoint: Get analytics for a clinician
+app.post('/api/analytics', async (req, res) => {
+    try {
+        const { clinicianId, timeframe } = req.body;
+        if (!clinicianId) {
+            return res.status(400).json({ success: false, message: 'clinicianId is required' });
+        }
+
+        // Find all users who have appointments with this clinician
+        const users = await User.find({ 'appointments.clinicianId': mongoose.Types.ObjectId(clinicianId) });
+
+        // Gather all appointments for this clinician
+        let allAppointments = [];
+        users.forEach(user => {
+            user.appointments.forEach(apt => {
+                if (apt.clinicianId && apt.clinicianId.toString() === clinicianId.toString()) {
+                    allAppointments.push(apt);
+                }
+            });
+        });
+
+        // Filter by timeframe if provided
+        let filteredAppointments = allAppointments;
+        const now = new Date();
+        if (timeframe === 'day') {
+            const today = now.toISOString().slice(0, 10);
+            filteredAppointments = allAppointments.filter(apt => {
+                const aptDate = apt.date instanceof Date
+                    ? apt.date.toISOString().slice(0, 10)
+                    : apt.date.slice(0, 10);
+                return aptDate === today;
+            });
+        } else if (timeframe === 'week') {
+            const weekAgo = new Date(now);
+            weekAgo.setDate(now.getDate() - 6);
+            filteredAppointments = allAppointments.filter(apt => {
+                const aptDate = new Date(apt.date);
+                return aptDate >= weekAgo && aptDate <= now;
+            });
+        } else if (timeframe === 'month') {
+            const monthAgo = new Date(now);
+            monthAgo.setMonth(now.getMonth() - 1);
+            filteredAppointments = allAppointments.filter(apt => {
+                const aptDate = new Date(apt.date);
+                return aptDate >= monthAgo && aptDate <= now;
+            });
+        } // else: default is all time
+
+        // Calculate analytics
+        const patientsSet = new Set(filteredAppointments.map(apt => apt.email));
+        const patients = patientsSet.size;
+
+        // Calculate average consultation time if available
+        // Assume apt.duration or apt.consultationTime in minutes, else use a default
+        let totalMinutes = 0;
+        let countWithTime = 0;
+        filteredAppointments.forEach(apt => {
+            if (apt.duration) {
+                totalMinutes += Number(apt.duration);
+                countWithTime++;
+            }
+        });
+        const avgConsultation = countWithTime > 0
+            ? `${Math.round(totalMinutes / countWithTime)} mins`
+            : 'N/A';
+
+        // Period label
+        let period = '';
+        if (timeframe === 'day') period = 'Today';
+        else if (timeframe === 'week') period = 'This Week';
+        else if (timeframe === 'month') period = 'This Month';
+        else period = 'All Time';
+
+        res.json({
+            success: true,
+            analytics: {
+                patients,
+                avgConsultation,
+                period
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching analytics:', error);
+        res.status(500).json({ success: false, message: 'Server error fetching analytics' });
+    }
+});
+
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
