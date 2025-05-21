@@ -659,6 +659,39 @@
             background-color: #616161;
         }
         
+        /* Loading spinner styles */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #e53935;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .confirmation-icon {
+            margin: 20px 0;
+        }
+
+        .location-info {
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .emergency-button {
@@ -828,13 +861,67 @@
     <!-- Emergency Modal -->
     <div class="emergency-modal" id="emergencyModal">
         <div class="emergency-modal-content">
-            <span class="emergency-close" id="closeEmergency">&times;</span>
-            <h2 class="emergency-modal-title">Emergency Services</h2>
-            <p>For immediate medical assistance, call:</p>
-            <div class="emergency-number">999</div>
-            <div class="emergency-options">
-                <button class="emergency-option" id="callEmergency">Call Now</button>
-                <button class="emergency-option secondary" id="cancelEmergency">Cancel</button>
+            <!-- Initial Emergency Screen -->
+            <div id="initialEmergencyScreen">
+                <span class="emergency-close" id="closeEmergency">&times;</span>
+                <h2 class="emergency-modal-title">Emergency Services</h2>
+                <p>For immediate medical assistance, call:</p>
+                <div class="emergency-number">999</div>
+                <div class="emergency-options">
+                    <button class="emergency-option" id="callEmergency">Call Now</button>
+                    <button class="emergency-option" id="sendAmbulance">Send Ambulance</button>
+                    <button class="emergency-option secondary" id="cancelEmergency">Cancel</button>
+                </div>
+            </div>
+            
+            <!-- Confirm Send Ambulance Screen -->
+            <div id="confirmSendScreen" style="display: none; text-align: center;">
+                <span class="emergency-close" id="closeConfirmSend">&times;</span>
+                <h2 class="emergency-modal-title">Confirm Ambulance Request</h2>
+                <div class="confirmation-icon" style="margin: 20px 0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                        <line x1="6" y1="1" x2="6" y2="4"></line>
+                        <line x1="10" y1="1" x2="10" y2="4"></line>
+                        <line x1="14" y1="1" x2="14" y2="4"></line>
+                    </svg>
+                </div>
+                <p style="font-size: 18px; margin-bottom: 20px;">Are you sure you want to request an ambulance?</p>
+                <p>This will dispatch emergency medical services to your location.</p>
+                <div class="emergency-options">
+                    <button class="emergency-option" id="confirmSendYes">Yes, Send Ambulance</button>
+                    <button class="emergency-option secondary" id="confirmSendNo">No, Cancel Request</button>
+                </div>
+            </div>
+            
+            <!-- Loading Screen -->
+            <div id="loadingScreen" style="display: none; text-align: center;">
+                <h2 class="emergency-modal-title">Locating Nearest Hospital</h2>
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                </div>
+                <p>Please wait while we locate the nearest emergency services...</p>
+            </div>
+            
+            <!-- Confirmation Screen -->
+            <div id="confirmationScreen" style="display: none; text-align: center;">
+                <h2 class="emergency-modal-title">Ambulance Dispatched</h2>
+                <div class="confirmation-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                        <line x1="6" y1="1" x2="6" y2="4"></line>
+                        <line x1="10" y1="1" x2="10" y2="4"></line>
+                        <line x1="14" y1="1" x2="14" y2="4"></line>
+                    </svg>
+                </div>
+                <p>An ambulance has been dispatched to your location:</p>
+                <div class="location-info" id="locationInfo">123 Main Street, City</div>
+                <p>Estimated arrival time: <span id="arrivalTime">8-10 minutes</span></p>
+                <div class="emergency-options">
+                    <button class="emergency-option" id="closeConfirmation">OK</button>
+                </div>
             </div>
         </div>
     </div>
@@ -900,10 +987,25 @@
         const closeEmergency = document.getElementById('closeEmergency');
         const callEmergency = document.getElementById('callEmergency');
         const cancelEmergency = document.getElementById('cancelEmergency');
-        
+        const sendAmbulance = document.getElementById('sendAmbulance');
+        const closeConfirmation = document.getElementById('closeConfirmation');
+        const confirmSendYes = document.getElementById('confirmSendYes');
+        const confirmSendNo = document.getElementById('confirmSendNo');
+        const closeConfirmSend = document.getElementById('closeConfirmSend');
+        const confirmSendScreen = document.getElementById('confirmSendScreen');
+
+        // Get the different screens
+        const initialScreen = document.getElementById('initialEmergencyScreen');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const confirmationScreen = document.getElementById('confirmationScreen');
+
         // Open modal when emergency button is clicked
         emergencyButton.addEventListener('click', function() {
             emergencyModal.style.display = 'flex';
+            initialScreen.style.display = 'block';
+            confirmSendScreen.style.display = 'none';
+            loadingScreen.style.display = 'none';
+            confirmationScreen.style.display = 'none';
         });
         
         // Close modal when close button is clicked
@@ -921,11 +1023,79 @@
             window.location.href = 'tel:999'; // Malaysian emergency number
         });
         
+        // Send ambulance process
+        sendAmbulance.addEventListener('click', function() {
+            // Show confirmation screen first
+            initialScreen.style.display = 'none';
+            confirmSendScreen.style.display = 'block';
+        });
+        
+        // Confirm send ambulance
+        confirmSendYes.addEventListener('click', function() {
+            // Hide confirmation screen and show loading screen
+            confirmSendScreen.style.display = 'none';
+            loadingScreen.style.display = 'block';
+            
+            // Simulate getting location and dispatching ambulance
+            setTimeout(function() {
+                // Get user's location if available
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            
+                            // Display approximate address based on coordinates
+                            document.getElementById('locationInfo').textContent = 
+                                `Location detected (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+                            
+                            // Generate random arrival time between 5-15 minutes
+                            const arrivalMinutes = Math.floor(Math.random() * 11) + 5;
+                            document.getElementById('arrivalTime').textContent = `${arrivalMinutes} minutes`;
+                            
+                            // Show confirmation screen
+                            loadingScreen.style.display = 'none';
+                            confirmationScreen.style.display = 'block';
+                        },
+                        function(error) {
+                            // If location access is denied
+                            document.getElementById('locationInfo').textContent = 
+                                "Location services unavailable. Emergency services have been notified.";
+                            document.getElementById('arrivalTime').textContent = "10-15 minutes";
+                            
+                            // Show confirmation screen
+                            loadingScreen.style.display = 'none';
+                            confirmationScreen.style.display = 'block';
+                        }
+                    );
+                } else {
+                    // Browser doesn't support geolocation
+                    document.getElementById('locationInfo').textContent = 
+                        "Location services not supported. Emergency services have been notified.";
+                    document.getElementById('arrivalTime').textContent = "10-15 minutes";
+                    
+                    // Show confirmation screen
+                    loadingScreen.style.display = 'none';
+                    confirmationScreen.style.display = 'block';
+                }
+            }, 3000); // 3 second loading time for demonstration
+        });
+        
+        // Cancel send ambulance
+        confirmSendNo.addEventListener('click', function() {
+            emergencyModal.style.display = 'none';
+        });
+        
         // Close modal when clicking outside the modal content
         window.addEventListener('click', function(event) {
             if (event.target === emergencyModal) {
                 emergencyModal.style.display = 'none';
             }
+        });
+
+        // Add this event listener for the OK button
+        closeConfirmation.addEventListener('click', function() {
+            emergencyModal.style.display = 'none';
         });
     </script>
 </body>
