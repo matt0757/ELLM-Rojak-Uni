@@ -22,6 +22,10 @@ A comprehensive web-based platform designed to connect patients and healthcare p
 - **Database**: MongoDB
 - **AI/ML**: Python (for triage prediction models)
 
+## 🧑‍🏫 Presentation
+
+https://www.canva.com/design/DAGoMNYNQO4/PhGDOz9B-6P2O2jDnWgV7w/edit?utm_content=DAGoMNYNQO4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
 ## 📦 Installation
 
 ```bash
