@@ -581,6 +581,105 @@
       color: var(--red-800);
       border-color: var(--red-800);
     }
+
+    /* Support Plans Tab Styles */
+    .support-description {
+      color: var(--gray-600);
+      margin-bottom: 2rem;
+      max-width: 700px;
+    }
+    
+    .support-plans {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+    
+    .support-card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      width: 300px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s, box-shadow 0.3s;
+      border: 1px solid var(--gray-200);
+    }
+    
+    .support-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .support-card-icon {
+      width: 60px;
+      height: 60px;
+      background-color: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+    
+    .support-card-icon svg {
+      color: var(--primary-color);
+      width: 30px;
+      height: 30px;
+    }
+    
+    .support-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--gray-900);
+    }
+    
+    .support-card p {
+      color: var(--gray-600);
+      font-size: 0.875rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .support-price {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 1.5rem;
+    }
+    
+    .support-price span {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+      font-weight: 400;
+    }
+    
+    .support-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.5rem;
+      text-align: left;
+    }
+    
+    .support-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0;
+      font-size: 0.875rem;
+      color: var(--gray-700);
+    }
+    
+    .support-features li svg {
+      color: var(--primary-color);
+      flex-shrink: 0;
+    }
+    
+    .support-btn {
+      margin-top: auto;
+    }
   </style>
 </head>
 <body>
@@ -617,6 +716,10 @@
       <a class="tab" data-tab="analytics">
         <i class="fas fa-chart-line"></i>
         Analytics
+      </a>
+      <a class="tab" data-tab="support">
+        <i class="fas fa-headset"></i>
+        Support Plans
       </a>
     </nav>
     
@@ -740,7 +843,143 @@
         <div class="chart-container">
           <h3 class="metric-title" style="margin-bottom: 1rem;">Patient Volume Over Time</h3>
           <div class="chart-placeholder">
-            [Chart visualization would be implemented here]
+            <canvas id="patientVolumeChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Support Plans Tab -->
+      <div class="tab-pane" id="support">
+        <h2 class="header-title" style="margin-bottom: 1.5rem;">Support Plans</h2>
+        <p class="support-description">Upgrade your plan to access additional features and premium support.</p>
+        
+        <div class="support-plans">
+          <!-- Free Plan -->
+          <div class="support-card">
+            <div class="support-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <h3>Free Support</h3>
+            <p>Basic features for individual clinicians</p>
+            <div class="support-price">RM 0<span>/month</span></div>
+            <ul class="support-features">
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Basic appointment management
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Patient records access
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Community support
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Limited analytics
+              </li>
+            </ul>
+            <button class="btn support-btn" onclick="showNotification('You are currently on the Free plan')">Current Plan</button>
+          </div>
+
+          <!-- Standard Plan -->
+          <div class="support-card">
+            <div class="support-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7-6.3-4.6L5.7 21l2.3-7-6-4.6h7.6L12 2z"></path>
+              </svg>
+            </div>
+            <h3>Standard Support</h3>
+            <p>Perfect for individual clinicians</p>
+            <div class="support-price">RM75<span>/month</span></div>
+            <ul class="support-features">
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Priority appointment scheduling
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Enhanced patient records
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Basic analytics dashboard
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Email support
+              </li>
+            </ul>
+            <button class="btn btn-primary support-btn" onclick="upgradePlan('standard')">Upgrade Plan</button>
+          </div>
+
+          <!-- Enterprise Plan -->
+          <div class="support-card">
+            <div class="support-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                <line x1="9" y1="2" x2="9" y2="22"></line>
+                <line x1="15" y1="2" x2="15" y2="22"></line>
+                <line x1="4" y1="7" x2="20" y2="7"></line>
+                <line x1="4" y1="12" x2="20" y2="12"></line>
+                <line x1="4" y1="17" x2="20" y2="17"></line>
+              </svg>
+            </div>
+            <h3>Enterprise Support</h3>
+            <p>Perfect for hospitals and healthcare organizations</p>
+            <div class="support-price">Contact Us<span> for pricing</span></div>
+            <ul class="support-features">
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                All features from Standard plan
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Custom API integration
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Dedicated account manager
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Staff training and onboarding
+              </li>
+              <li>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Custom reporting and analytics
+              </li>
+            </ul>
+            <button class="btn btn-primary support-btn" onclick="contactSales()">Contact Sales</button>
           </div>
         </div>
       </div>
@@ -827,7 +1066,7 @@ const appointments = [
   { 
     id: '1',
     time: '7:00 AM - 9:00 AM', 
-    date: '2025-05-12',
+    date: '2025-05-24',
     patient: 'Markues Ng',
     email: 'markues@example.com', 
     status: 'Upcoming', 
@@ -841,7 +1080,7 @@ const appointments = [
   {
     id: '2',
     time: '10:00 AM - 12:00 PM',
-    date: '2025-05-12',
+    date: '2025-05-24',
     patient: 'John Smith',
     email: 'patient1@example.com',
     status: 'Upcoming',
@@ -855,7 +1094,7 @@ const appointments = [
   {
     id: '3',
     time: '3:00 PM - 5:00 PM',
-    date: '2025-05-12',
+    date: '2025-05-24',
     patient: 'Arvind Kumar',
     email: 'arvind.k@example.com',
     status: 'Upcoming',
@@ -869,7 +1108,7 @@ const appointments = [
   {
     id: '4',
     time: '9:00 AM - 11:00 AM',
-    date: '2025-05-13',
+    date: '2025-05-25',
     patient: 'Siti Zulaikha',
     email: 'patient6@example.com',
     status: 'Upcoming',
@@ -883,7 +1122,7 @@ const appointments = [
   {
     id: '5',
     time: '12:00 PM - 2:00 PM',
-    date: '2025-05-13',
+    date: '2025-05-25',
     patient: 'Chen Wei',
     email: 'patient5@example.com',
     status: 'Upcoming',
@@ -897,7 +1136,7 @@ const appointments = [
   {
     id: '6',
     time: '8:00 AM - 10:00 AM',
-    date: '2025-05-14',
+    date: '2025-05-26',
     patient: 'Lily Wong',
     email: 'patient8@example.com',
     status: 'Upcoming',
@@ -911,7 +1150,7 @@ const appointments = [
   {
     id: '7',
     time: '11:00 AM - 1:00 PM',
-    date: '2025-05-14',
+    date: '2025-05-26',
     patient: 'Choon Yi Keith',
     email: 'yikeithchoon@gmail.com',
     status: 'Upcoming',
@@ -925,7 +1164,7 @@ const appointments = [
   {
     id: '8',
     time: '2:00 PM - 4:00 PM',
-    date: '2025-05-14',
+    date: '2025-05-26',
     patient: 'Marcus Lee',
     email: 'patient3@example.com',
     status: 'Upcoming',
@@ -939,7 +1178,7 @@ const appointments = [
   {
     id: '9',
     time: '7:00 AM - 9:00 AM',
-    date: '2025-05-15',
+    date: '2025-05-27',
     patient: 'Aishah Rahman',
     email: 'aishahrahman@example.com',
     status: 'Upcoming',
@@ -953,7 +1192,7 @@ const appointments = [
   {
     id: '10',
     time: '10:00 AM - 12:00 PM',
-    date: '2025-05-15',
+    date: '2025-05-27',
     patient: 'Nurul Aisyah',
     email: 'patient4@example.com',
     status: 'Upcoming',
@@ -967,7 +1206,7 @@ const appointments = [
   {
     id: '11',
     time: '1:00 PM - 3:00 PM',
-    date: '2025-05-15',
+    date: '2025-05-27',
     patient: 'John Lim',
     email: 'john@example.com',
     status: 'Upcoming',
@@ -981,7 +1220,7 @@ const appointments = [
   {
     id: '12',
     time: '11:00 AM - 1:00 PM',
-    date: '2025-05-16',
+    date: '2025-05-28',
     patient: 'Mack Yong',
     email: 'mackyong@example.com',
     status: 'Upcoming',
@@ -996,7 +1235,7 @@ const appointments = [
 
 const analyticsData = {
   patients: {
-    day: 3,  // Number of patients for May 12 (default current day)
+    day: 3,  // Number of patients for May 24 (default current day)
     month: 25,
     year: 245
   },
@@ -1006,7 +1245,7 @@ const analyticsData = {
     year: '20 mins'
   },
   period: {
-    day: 'May 12, 2025',
+    day: 'May 24, 2025',
     month: 'May 2025',
     year: '2025'
   }
@@ -1335,6 +1574,136 @@ function switchTimeframe(timeframe) {
   currentTimeframe = timeframe;
 }
 
+// Add Chart.js library
+function loadChartJs() {
+  return new Promise((resolve) => {
+    if (window.Chart) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+    script.onload = () => resolve();
+    document.head.appendChild(script);
+  });
+}
+
+// Chart data for different timeframes
+const chartData = {
+  day: {
+    labels: ['7AM', '8AM', '9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM'],
+    datasets: [{
+      label: 'Patients per Hour',
+      data: [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+      backgroundColor: 'rgba(79, 70, 229, 0.2)',
+      borderColor: 'rgba(79, 70, 229, 1)',
+      borderWidth: 2,
+      tension: 0.4,
+      pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+    }]
+  },
+  month: {
+    labels: ['1', '5', '10', '15', '20', '25', '30'],
+    datasets: [{
+      label: 'Patients per Day',
+      data: [8, 12, 9, 11, 14, 10, 7],
+      backgroundColor: 'rgba(79, 70, 229, 0.2)',
+      borderColor: 'rgba(79, 70, 229, 1)',
+      borderWidth: 2,
+      tension: 0.4,
+      pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+    }]
+  },
+  year: {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    datasets: [{
+      label: 'Patients per Month',
+      data: [45, 39, 60, 75, 82, 56, 53, 80, 72, 65, 68, 70],
+      backgroundColor: 'rgba(79, 70, 229, 0.2)',
+      borderColor: 'rgba(79, 70, 229, 1)',
+      borderWidth: 2,
+      tension: 0.4,
+      pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+    }]
+  }
+};
+
+// Chart instance
+let patientChart;
+
+// Initialize chart with default timeframe (day)
+async function initializeChart() {
+  await loadChartJs();
+  
+  const ctx = document.getElementById('patientVolumeChart').getContext('2d');
+  
+  patientChart = new Chart(ctx, {
+    type: 'line',
+    data: chartData[currentTimeframe],
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        tooltip: {
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          titleColor: '#1f2937',
+          bodyColor: '#1f2937',
+          borderColor: '#e5e7eb',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: {
+            label: function(context) {
+              let label = context.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (context.parsed.y !== null) {
+                label += context.parsed.y + ' patients';
+              }
+              return label;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: {
+            precision: 0
+          },
+          grid: {
+            color: 'rgba(229, 231, 235, 0.5)'
+          }
+        }
+      }
+    }
+  });
+}
+
+// Update the chart when timeframe changes
+function updateChart(timeframe) {
+  if (!patientChart) return;
+  
+  patientChart.data = chartData[timeframe];
+  patientChart.update();
+}
+
+// Modify the switchTimeframe function to update the chart
+const originalSwitchTimeframe = switchTimeframe;
+switchTimeframe = function(timeframe) {
+  originalSwitchTimeframe(timeframe);
+  updateChart(timeframe);
+};
+
 // Sign out
 function signOut() {
   // Show confirmation dialog
@@ -1349,6 +1718,23 @@ function signOut() {
       window.location.href = 'login.html';
     }, 1000);
   }
+}
+
+// Handle plan upgrade
+function upgradePlan(plan) {
+  // In a real application, this would open a payment modal or redirect to a payment page
+  showNotification(`Upgrading to ${plan} plan. Processing payment...`);
+  
+  // Simulate processing
+  setTimeout(() => {
+    showNotification('Plan upgraded successfully!');
+  }, 2000);
+}
+
+// Handle contact sales request
+function contactSales() {
+  // In a real application, this would open a contact form or redirect to a contact page
+  showNotification('Your request has been submitted. Our sales team will contact you shortly.');
 }
 
 // Helper function for getting user initials
@@ -1399,6 +1785,9 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Initialize analytics data
   switchTimeframe('day');
+
+  // Initialize the chart
+  initializeChart();
 });
   </script>
 </body>
